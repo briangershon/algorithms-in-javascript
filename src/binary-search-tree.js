@@ -90,6 +90,50 @@ class BinarySearchTree {
     }
   }
 
+  min() {
+    return this.minNode(this.root);
+  }
+
+  // find the bottom left most node
+  minNode(node) {
+    if (node) {
+      while (node && node.left !== null) {
+        node = node.left;
+      }
+      return node.key;
+    }
+  }
+
+  max() {
+    return this.maxNode(this.root);
+  }
+
+  // find the bottom right most node
+  maxNode(node) {
+    if (node) {
+      while (node && node.right !== null) {
+        node = node.right;
+      }
+      return node.key;
+    }
+  }
+
+  hasKey(key) {
+    return this.search(this.root, key);
+  }
+
+  search(node, key) {
+    if (node === null) {
+      return false;
+    }
+    if (key < node.key) {
+      return this.search(node.left, key);
+    } else if (key > node.key) {
+      return this.search(node.right, key);
+    } else {
+      return true;
+    }
+  }
 }
 
 class Node {
