@@ -6,5 +6,6 @@ Includes:
 
 * Bubble Sort
 * Merge Sort
-* HashTable
-* Minimal LinkedList (used for HashTable)
+* Hash Table
+* Linked List (only with methods needed for HashTable)
+* Binary Search Tree
