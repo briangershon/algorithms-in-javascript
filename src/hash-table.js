@@ -1,8 +1,10 @@
 /*
-  Implement a HashTable from scratch.
+  A HashTable from scratch using Array + LinkedList implementation.
 
   The "lose lose" hash is used intentionally to test collision logic.
   */
+
+import LinkedList from './linked-list';
 
 class HashTable {
   constructor() {
@@ -20,13 +22,28 @@ class HashTable {
 
   putValue(key, value) {
     const hash = this.loseloseHash(key);
-    // console.log(`key "${hash}" being set to "${value}"`);
-    this.data[hash] = value;
+    if (this.data[hash] === undefined) {
+      const list = new LinkedList();
+      list.append(key, value);
+      this.data[hash] = list;
+    } else {
+      this.data[hash].append(key, value);
+    }
   }
 
   getValue(key) {
     const hash = this.loseloseHash(key);
-    return this.data[hash];
+    if (this.data[hash]) {
+      const nodes = this.data[hash].allNodes();
+      for (let i = 0; i < nodes.length; i += 1) {
+        const node = nodes[i]
+        if (node.key === key) {
+          return node.value;
+        }
+      }
+      return null;
+    }
+    return null;
   }
 }
 
