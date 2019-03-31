@@ -1,12 +1,12 @@
 
-class Node {
-  constructor(key) {
-    this.key = key;
-    this.left = null;
-    this.right = null;
-  }
-}
+/*
+  Binary Search tree with methods for:
 
+  In Order traversal -- e.g. sorted list of keys
+  Pre Order traversal -- e.g. useful for showing a structured document
+  Post Order traveral -- e.g. useful for adding up space used by files in directories
+
+*/
 class BinarySearchTree {
   constructor() {
     this.root = null;
@@ -38,7 +38,6 @@ class BinarySearchTree {
     }
   }
 
-  // visit left node, current node, then right node
   orderedKeys() {
     const results = [];
     const appendValue = (v) => {
@@ -48,12 +47,56 @@ class BinarySearchTree {
     return results;
   }
 
+  // visit left node, current node, then right node
   inOrderTraversal(node, callback) {
     if (node !== null) {
       this.inOrderTraversal(node.left, callback);
       callback(node.key);  // append via callback
       this.inOrderTraversal(node.right, callback);
     }
+  }
+
+  preOrderKeys() {
+    const results = [];
+    const appendValue = (v) => {
+      results.push(v);
+    };
+    this.preOrderTraversal(this.root, appendValue);
+    return results;
+  }
+
+  preOrderTraversal(node, callback) {
+    if (node !== null) {
+      callback(node.key);  // append via callback
+      this.preOrderTraversal(node.left, callback);
+      this.preOrderTraversal(node.right, callback);
+    }
+  }
+
+  postOrderKeys() {
+    const results = [];
+    const appendValue = (v) => {
+      results.push(v);
+    };
+    this.postOrderTraversal(this.root, appendValue);
+    return results;
+  }
+
+  postOrderTraversal(node, callback) {
+    if (node !== null) {
+      this.postOrderTraversal(node.left, callback);
+      this.postOrderTraversal(node.right, callback);
+      callback(node.key);  // append via callback
+    }
+  }
+
+}
+
+class Node {
+  constructor(key) {
+    this.key = key;
+    this.left = null;
+    this.right = null;
   }
 }
 

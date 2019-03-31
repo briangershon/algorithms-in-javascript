@@ -1,12 +1,3 @@
-
-class Node {
-  constructor(key, value) {
-    this.key = key;
-    this.value = value;
-    this.next = null;
-  }
-}
-
 class LinkedList {
   constructor() {
     this.head = null;
@@ -68,6 +59,14 @@ class LinkedList {
       }
       return result;
     }
+  }
+}
+
+class Node {
+  constructor(key, value) {
+    this.key = key;
+    this.value = value;
+    this.next = null;
   }
 }
 
