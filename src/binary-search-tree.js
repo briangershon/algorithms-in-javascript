@@ -90,18 +90,13 @@ class BinarySearchTree {
     }
   }
 
-  min() {
-    return this.minNode(this.root);
-  }
-
   // find the bottom left most node
-  minNode(node) {
-    if (node) {
-      while (node && node.left !== null) {
-        node = node.left;
-      }
-      return node.key;
+  min() {
+    const minNode = this.findMinNode(this.root);
+    if (minNode) {
+      return minNode.key;
     }
+    return null;
   }
 
   max() {
