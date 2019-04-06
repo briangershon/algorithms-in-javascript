@@ -19,9 +19,7 @@ describe('Fibonacci correct find n element', () => {
   });
 
   test('when n = 20', () => {
-    console.time('20');
     const result = new Fibonacci().calc(20);
-    console.timeEnd('20');
     expect(result).toEqual(6765);
   });
 

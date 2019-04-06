@@ -1,7 +1,7 @@
 /*
   Calculate Fibonacci.
 
-  This is a top-down version with memoization and recursion.
+  This is a bottom-up version using memoization and iteration.
 */
 class Fibonacci {
   constructor() {
@@ -12,12 +12,20 @@ class Fibonacci {
   }
 
   calc(i) {
-    if (this.memo.hasOwnProperty(i)) {
-      return this.memo[i];
+    if (i === 0 || i === 1) {
+      return i;
     }
 
-    this.memo[i] = this.calc(i - 1) + this.calc(i - 2); 
-    return this.memo[i];
+    let total = 2;
+    for (let n = 2; n < i - 1; n += 1) {
+      if (this.memo.hasOwnProperty(i)) {
+        total += this.memo[n];
+      } else {
+        this.memo[n] = this.memo[n - 1] + this.memo[n - 2];
+        total += this.memo[n];
+      }
+    }
+    return total;
   }
 }
 
