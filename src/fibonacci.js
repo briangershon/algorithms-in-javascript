@@ -1,31 +1,24 @@
 /*
   Calculate Fibonacci.
 
-  This is a bottom-up version using memoization and iteration.
+  This is a bottom-up version using iteration and minimal memory
+  since we just save last two values, not all of them.
 */
 class Fibonacci {
-  constructor() {
-    this.memo = {
-      0: 0,
-      1: 1,
-    };
-  }
-
   calc(i) {
-    if (i === 0 || i === 1) {
-      return i;
+    if (i === 0) {
+      return 0;
     }
 
-    let total = 2;
-    for (let n = 2; n < i - 1; n += 1) {
-      if (this.memo.hasOwnProperty(i)) {
-        total += this.memo[n];
-      } else {
-        this.memo[n] = this.memo[n - 1] + this.memo[n - 2];
-        total += this.memo[n];
-      }
+    let prevPrev = 0;
+    let prev = 1;
+
+    for (let n = 2; n < i; n += 1) {
+      const newest = prev + prevPrev;
+      prevPrev = prev;
+      prev = newest;
     }
-    return total;
+    return prev + prevPrev;
   }
 }
 
