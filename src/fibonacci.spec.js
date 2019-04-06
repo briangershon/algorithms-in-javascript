@@ -26,20 +26,15 @@ describe('Fibonacci correct find n element', () => {
   });
 
   test('when n = 40', () => {
-    console.time('40');
     const result = new Fibonacci().calc(40);
-    console.timeEnd('40');
     expect(result).toEqual(102334155);
   });
 
-  // this takes a long time using naive method
   // Note that 78 is the highest Fib that can be
   //  represented in JavaScript's 64 bit integer
   //  (9007199254740991)
-  // test('when n = 78', () => {
-  //   console.time('78');
-  //   const result = new Fibonacci().calc(78);
-  //   console.timeEnd('78');
-  //   expect(result).toEqual(8944394323791464);
-  // });
+  test('when n = 78', () => {
+    const result = new Fibonacci().calc(78);
+    expect(result).toEqual(8944394323791464);
+  });
 });

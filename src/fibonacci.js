@@ -1,14 +1,23 @@
 /*
   Calculate Fibonacci.
 
-  This is initial naive slow version.
+  This is a top-down version with memoization and recursion.
 */
 class Fibonacci {
+  constructor() {
+    this.memo = {
+      0: 0,
+      1: 1,
+    };
+  }
+
   calc(i) {
-    if (i === 0 || i === 1) {
-      return i;
+    if (this.memo.hasOwnProperty(i)) {
+      return this.memo[i];
     }
-    return this.calc(i - 1) + this.calc(i - 2);
+
+    this.memo[i] = this.calc(i - 1) + this.calc(i - 2); 
+    return this.memo[i];
   }
 }
 
