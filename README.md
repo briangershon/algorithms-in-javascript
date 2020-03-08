@@ -9,3 +9,8 @@ Includes:
 * Hash Table
 * Linked List (only with methods needed for HashTable)
 * Binary Search Tree
+
+## To run
+
+    npm install
+    npm test
