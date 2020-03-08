@@ -9,10 +9,10 @@
   "author": "Brian Gershon",
   "license": "MIT",
   "devDependencies": {
-    "@babel/preset-env": "^7.4.2",
-    "eslint": "^5.15.3",
-    "eslint-plugin-jest": "^22.4.1",
-    "jest": "^24.5.0",
-    "parcel-bundler": "^1.12.3"
+    "@babel/preset-env": "^7.8.7",
+    "eslint": "6.8.0",
+    "eslint-plugin-jest": "^23.8.2",
+    "jest": "^25.1.0",
+    "parcel-bundler": "^1.12.4"
   }
 }
