@@ -1,41 +1,39 @@
 
 /*
-  Binary Search tree with methods for:
+  Left Leaning Red Black Binary Search Tree.
+  Author: Brian Gershon, March 2020
 
-  In Order traversal -- e.g. sorted list of keys
-  Pre Order traversal -- e.g. useful for showing a structured document
-  Post Order traveral -- e.g. useful for adding up space used by files in directories
-
+  Favorite article about Red-Black: https://medium.com/basecs/painting-nodes-black-with-red-black-trees-60eacb2be9a5
+  which leads to simplified Left Leaning implementation: https://www.cs.princeton.edu/~rs/talks/LLRB/RedBlack.pdf
 */
-class BinarySearchTree {
+
+class RedBlackBinarySearchTree {
   constructor() {
     this.root = null;
+    this.nodeCount = 0;
   }
 
-  insert(key) {
+  // TODO: Add Left-leaning Red-Black logic
+  insert(h, key) {
     if (this.root === null) {
-      this.root = new Node(key);
-    } else {
-      this.insertNode(this.root, new Node(key));
+      this.nodeCount += 1;
+      const n = new Node(key);
+      n.red = false;  // root node is black
+      return n;
     }
-  }
+    if (h === null) {
+      this.nodeCount += 1;
+      return new Node(key);
+    }
 
-  insertNode(node, newNode) {
-    if (newNode.key < node.key) {
-      // add to the left
-      if (node.left) {
-        this.insertNode(node.left, newNode);
-      } else {
-        node.left = newNode;
-      }
-    } else {
-      // add to the right
-      if (node.right) {
-        this.insertNode(node.right, newNode);
-      } else {
-        node.right = newNode;
-      }
+    if (key < h.key) {
+      h.left = this.insert(h.left, key);
     }
+    else {
+      h.right = this.insert(h.right, key);
+    }
+
+    return h;
   }
 
   orderedKeys() {
@@ -117,16 +115,16 @@ class BinarySearchTree {
     return this.search(this.root, key);
   }
 
+  // return found node, or null
   search(node, key) {
-    if (node === null) {
-      return false;
-    }
+    if (node === null) return null;
+
     if (key < node.key) {
       return this.search(node.left, key);
     } else if (key > node.key) {
       return this.search(node.right, key);
     } else {
-      return true;
+      return node;
     }
   }
 
@@ -183,7 +181,16 @@ class Node {
     this.key = key;
     this.left = null;
     this.right = null;
+    this.red = true;
+  }
+
+  isRed() {
+    return this.red;
+  }
+
+  isBlack() {
+    return !this.red;
   }
 }
 
-export default BinarySearchTree;
+export default RedBlackBinarySearchTree;
