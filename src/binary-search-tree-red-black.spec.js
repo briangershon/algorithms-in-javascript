@@ -10,12 +10,32 @@ describe('Binary Search Tree (Red-Black balancing algorithm)', () => {
     expect(tree.orderedKeys()).toEqual([5, 8, 18]);
 
     const root = tree.search(tree.root, 8);
-    expect(root.isBlack()).toBeTruthy();
+    expect(tree.isBlack(root)).toBeTruthy();
 
     const left = tree.search(tree.root, 5);
-    expect(left.isRed()).toBeTruthy();
+    expect(tree.isRed(left)).toBeTruthy();
 
     const right = tree.search(tree.root, 18);
-    expect(right.isRed()).toBeTruthy();
+    expect(tree.isRed(right)).toBeTruthy();
   });
+
+  // test('insert 1 2 3 should rotate left', () => {
+  //   const tree = new RedBlackBinarySearchTree();
+  //   tree.root = tree.insert(null, 1);
+  //   tree.insert(tree.root, 2);
+  //   tree.insert(tree.root, 3);
+
+  //   console.log('tree.orderedKeys()', tree.orderedKeys());
+  //   expect(tree.orderedKeys()).toEqual([1, 2, 3]);
+
+  //   const root = tree.search(tree.root, 2);
+  //   expect(tree.isBlack(root)).toBeTruthy();
+
+  //   const left = tree.search(tree.root, 1);
+  //   expect(tree.isRed(left)).toBeTruthy();
+
+  //   const right = tree.search(tree.root, 3);
+  //   expect(tree.isRed(right)).toBeTruthy();
+  // });
+
 });

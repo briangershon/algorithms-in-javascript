@@ -13,28 +13,78 @@ class RedBlackBinarySearchTree {
     this.nodeCount = 0;
   }
 
-  // TODO: Add Left-leaning Red-Black logic
   insert(h, key) {
-    if (this.root === null) {
-      this.nodeCount += 1;
-      const n = new Node(key);
-      n.red = false;  // root node is black
-      return n;
-    }
     if (h === null) {
       this.nodeCount += 1;
-      return new Node(key);
+      const n = new Node(key);
+      if (this.root === null) n.red = false;
+      return n;
     }
+
+    // color flip on way down
+    if (this.isRed(h.left) && this.isRed(h.right)) this.colorFlip(h);
 
     if (key < h.key) {
       h.left = this.insert(h.left, key);
-    }
-    else {
+    } else {
       h.right = this.insert(h.right, key);
     }
 
+    // rotate on way up
+    if (this.isRed(h.right)) h = this.rotateLeft(h);
+    if (this.isRed(h.left) && this.isRed(h.left.left)) h = this.rotateRight(h);
+
     return h;
   }
+
+  colorFlip(x) {
+    x.red = !x.red;
+    x.left.red = !x.left.red;
+    x.right.red = !x.right.red;
+    return x;
+  }
+
+  /*
+    8 (h)
+     \
+      18 (x)
+  */
+  rotateLeft(h) {
+    const x = h.right;
+    // change root if necessary
+    if (this.root && h === this.root) {
+      this.root = x;
+    }
+    h.right = x.left;
+    x.left = h;
+    x.red = x.left.red;
+    x.left.red = true;
+    return x;
+  }
+
+  rotateRight(h) {
+    const x = h.left;
+    // change root if necessary
+    if (this.root && h === this.root) {
+      this.root = x;
+    }
+    h.left = x.right;
+    x.right = h;
+    x.red = x.right.red;
+    x.right.red = true;
+    return x;
+  }
+
+  isRed(h) {
+    if (h === null) return false;
+    return h.red;
+  }
+
+  isBlack(h) {
+    if (h === null) return true;
+    return !h.red;
+  }
+
 
   orderedKeys() {
     const results = [];
@@ -182,14 +232,6 @@ class Node {
     this.left = null;
     this.right = null;
     this.red = true;
-  }
-
-  isRed() {
-    return this.red;
-  }
-
-  isBlack() {
-    return !this.red;
   }
 }
 
