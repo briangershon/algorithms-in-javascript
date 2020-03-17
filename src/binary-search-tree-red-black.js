@@ -13,7 +13,11 @@ class RedBlackBinarySearchTree {
     this.nodeCount = 0;
   }
 
-  insert(h, key) {
+  insert(key) {
+    this.root = this.insertHelper(this.root, key);
+  }
+
+  insertHelper(h, key) {
     if (h === null) {
       this.nodeCount += 1;
       const n = new Node(key);
@@ -25,9 +29,9 @@ class RedBlackBinarySearchTree {
     if (this.isRed(h.left) && this.isRed(h.right)) this.colorFlip(h);
 
     if (key < h.key) {
-      h.left = this.insert(h.left, key);
+      h.left = this.insertHelper(h.left, key);
     } else {
-      h.right = this.insert(h.right, key);
+      h.right = this.insertHelper(h.right, key);
     }
 
     // rotate on way up
@@ -73,6 +77,37 @@ class RedBlackBinarySearchTree {
     x.red = x.right.red;
     x.right.red = true;
     return x;
+  }
+
+  removeMin() {
+    this.root = this.deleteMin(this.root);
+    if (this.root) {
+      this.root.red = false;
+    }
+  }
+
+  deleteMin(h) {
+    if (h.left === null) return null;
+    if (this.isBlack(h.left) && this.isBlack(h.left.left)) h = this.moveRedLeft(h);
+    h.left = this.deleteMin(h.left);
+    return this.fixUp(h);
+  }
+
+  moveRedLeft(h) {
+    this.colorFlip(h);
+    if (this.isRed(h.right.left)) {
+      h.right = this.rotateRight(h.right);
+      h = this.rotateLeft(h);
+      this.colorFlip(h);
+    }
+    return h;
+  }
+
+  fixUp(h) {
+    if (this.isRed(h.right)) h = this.rotateLeft(h);
+    if (this.isRed(h.left) && this.isRed(h.left.left)) h = this.rotateRight(h);
+    if (this.isRed(h.left) && this.isRed(h.right)) this.colorFlip(h);
+    return h;
   }
 
   isRed(h) {
@@ -223,6 +258,22 @@ class RedBlackBinarySearchTree {
       node = node.left;
     }
     return node;
+  }
+
+  getHeight() {
+    return this.height(this.root);
+  }
+
+  // post traversal to figure out balance
+  height(node) {
+    if (node === null) {
+      return 0;
+    }
+    const leftHeight = this.height(node.left);
+    const rightHeight = this.height(node.right);
+    node.height = Math.max(leftHeight, rightHeight) + 1;
+    node.balance = leftHeight - rightHeight;
+    return node.height;
   }
 }
 
