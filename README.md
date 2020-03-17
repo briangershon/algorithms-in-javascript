@@ -9,8 +9,11 @@ Includes:
 * Hash Table
 * Linked List (only with methods needed for HashTable)
 * Binary Search Tree
+* Binary Search Tree (Red/Black)
+
 
 ## To run
 
     npm install
     npm test
+
