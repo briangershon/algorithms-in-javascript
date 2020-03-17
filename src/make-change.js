@@ -16,7 +16,7 @@ class MakeChange {
   }
   count(denominations, changeAmount) {
     const c = this.findCount(denominations, denominations.length, changeAmount);
-    console.log(`For change amount ${changeAmount}, total calls were ${this.timesCalled} without memoization`);
+    // console.log(`For change amount ${changeAmount}, total calls were ${this.timesCalled} without memoization`);
     return c;
   }
 
