@@ -8,6 +8,8 @@ References:
 
 Currently supports number values and these operators: *, +, (, )
 NOTE that all tokens need to be white-space delimited atm. e.g. `( 1 + 2 )` works, `(1+2)` does not.
+
+How to use this class? See `shunting-yard.spec.js`
 */
 
 class ShuntingYard {
