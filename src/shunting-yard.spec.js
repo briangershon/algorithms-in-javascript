@@ -13,4 +13,12 @@ describe('ShuntingYard returns Reverse Polish Notation', () => {
     const yard = new ShuntingYard();
     expect(yard.toReversePolishNotation('2 * 100 + 46')).toEqual([2, 100, '*', 46, '+']);
   });
+  test('support for parenthesis', () => {
+    const yard = new ShuntingYard();
+    expect(yard.toReversePolishNotation('2 * ( 100 + 46 )')).toEqual([2, 100, 46, '+', '*']);
+  });
+  test('support for parenthesis', () => {
+    const yard = new ShuntingYard();
+    expect(yard.toReversePolishNotation('( 7 * 100 + 83 ) * 1000 + ( 9 * 100 + 19 )')).toEqual([7, 100, '*', 83, '+', 1000, '*', 9, 100, '*', 19, '+', '+']);
+  });
 });

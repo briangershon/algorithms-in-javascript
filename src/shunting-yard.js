@@ -6,7 +6,8 @@ References:
  https://brilliant.org/wiki/shunting-yard-algorithm/
  https://en.wikipedia.org/wiki/Shunting-yard_algorithm
 
-Currently supports *, + operators and and number values.
+Currently supports number values and these operators: *, +, (, )
+NOTE that all tokens need to be white-space delimited atm. e.g. `( 1 + 2 )` works, `(1+2)` does not.
 */
 
 class ShuntingYard {
@@ -20,13 +21,16 @@ class ShuntingYard {
   }
 
   toReversePolishNotation(string) {
+    this.outputQueue = [];
+    this.operatorStack = [];
+
     const s = string.split(' ');
     for (let i = 0; i < s.length; i++) {
       const token = s[i];
-      if (this.isOperator(token)) {
-        this.add(s[i]);
+      if (this.isOperator(token) || token === '(' || token === ')') {
+        this.add(token);
       } else {
-        this.add(Number(s[i]));  // convert value from string to number
+        this.add(Number(token));  // convert value from string to number
       }
     }
     this.add(null);
@@ -53,11 +57,33 @@ class ShuntingYard {
     }
   }
 
+  pushOperatorsToOutputUntilWeFindLeftParenthesis() {
+    let operator;
+    do {
+      operator = this.operatorStack.pop();
+      if (!operator || operator === '(') {
+        operator == null;
+      } else {
+        this.outputQueue.push(operator);
+      }
+    } while (operator);
+  }
+
   add(token) {
     if (token === null) {
       // Indicate there are no more tokens. If there are still operators in stack
       //   add those operators to output.
       this.pushRemainingOperatorsToOutput();
+      return;
+    }
+
+    if (token === '(') {
+      this.operatorStack.push(token);
+      return;
+    }
+
+    if (token === ')') {
+      this.pushOperatorsToOutputUntilWeFindLeftParenthesis();
       return;
     }
 
