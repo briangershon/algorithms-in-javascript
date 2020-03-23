@@ -18,10 +18,42 @@ Additional Notes:
     All tested numbers are valid, you don't need to validate them
 */
 
-// start at biggest multiplier and recurse on left and right sides from there
+// Strategy: Start at biggest multiplier (million, thousand, hundred)
+//   and recursively "multiply" left results, and "add" right results.
 class ParseInt {
-  constructor() {
-    this.values = {
+  parseInt(string) {
+    return this.recursiveParse(this.wordsToNumbers(string));
+  }
+
+  recursiveParse(nums) {
+    if (nums.length === 0) throw new Error('nums array must not be empty');
+    if (nums.length === 1) return nums[0];
+
+    const highestNumber = nums.reduce((acc, current) => {
+      if (current > acc) {
+        return current;
+      }
+      return acc;
+    });
+    const highestIndex = nums.indexOf(highestNumber);
+
+    const leftSlice = nums.slice(0, highestIndex);
+    const rightSlice = nums.slice(highestIndex + 1);
+
+    // handle special case there there may not be a right slice, e.g. "one hundred"
+    // so avoid passing an empty array for right side.
+    if (rightSlice.length) {
+      return this.recursiveParse(leftSlice) *
+      nums[highestIndex] +
+      this.recursiveParse(rightSlice);
+    }
+
+    return this.recursiveParse(leftSlice) * nums[highestIndex];
+  }
+
+  // Convert "words" to "numbers".
+  wordsToNumbers(string) {
+    const values = {
       'zero': 0,
       'one': 1,
       'two': 2,
@@ -54,45 +86,16 @@ class ParseInt {
       'thousand': 1000,
       'million': 1000000
     };
-  }
 
-  parseInt(string) {
-    // recursively multiply and add, starting at highest multiplier (million, thousand, hundred)
-    return this.recursiveParse(this.wordsToNumbers(string));
-  }
-
-  
-  recursiveParse(nums) {
-    if (nums.length === 1) return nums[0];
-
-    const highestNumber = nums.reduce((acc, current) => {
-      if (current > acc) {
-        return current;
-      }
-      return acc;
-    });
-    const highestIndex = nums.indexOf(highestNumber);
-
-    // recurse by multiplying results of left side, and adding results of right side
-    return this.recursiveParse(nums.slice(0, highestIndex)) *
-      nums[highestIndex] +
-      this.recursiveParse(nums.slice(highestIndex + 1));
-  }
-
-  // Convert "words" to "numbers".
-  // Also handle converting numbers with a dash e.g. `sixty-five`
-  wordsToNumbers(string) {
-    const values = this.values;
-
-    // strip out 'and'
+    // strip out invalid tokens, i.e. 'and'
     const validTokensOnly = string.split(' ').filter((token) => {
       return token !== 'and';
     });
 
     // convert array of word strings to actual numbers
     return validTokensOnly.map((token) => {
+      if (token === 'zero') return 0;
       if (values[token]) return Number(values[token]);
-
       if (token.indexOf('-') > -1) {
         const [left, right] = token.split('-');
         return Number(values[left]) + Number(values[right]);
