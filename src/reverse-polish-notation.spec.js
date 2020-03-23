@@ -13,4 +13,12 @@ describe('ReversePolish', () => {
     const notation = new ReversePolish();
     expect(notation.calculate([7, 100, '*', 83, '+', 1000, '*', 9, 100, '*', 19, '+', '+'])).toEqual(783919);
   });
+  test('supports division and subtraction', () => {
+    const notation = new ReversePolish();
+    expect(notation.calculate([100, 2, '/', 50, '-'])).toEqual(0);
+  });
+  test('supports more complex division and subtraction', () => {
+    const notation = new ReversePolish();
+    expect(notation.calculate([100, 2, '/', 50, '+', 1000, '*', 12, 4, '/', 19, '+', '-'])).toEqual(99978);
+  });
 });

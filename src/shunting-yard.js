@@ -6,7 +6,7 @@ References:
  https://brilliant.org/wiki/shunting-yard-algorithm/
  https://en.wikipedia.org/wiki/Shunting-yard_algorithm
 
-Currently supports number values and these operators: *, +, (, )
+Currently supports number values and these operators: *, /, +, -, (, )
 NOTE that all tokens need to be white-space delimited atm. e.g. `( 1 + 2 )` works, `(1+2)` does not.
 
 How to use this class? See `shunting-yard.spec.js`
@@ -16,7 +16,9 @@ class ShuntingYard {
   constructor() {
     this.operatorPrecedence = {
       '*': 2,
-      '+': 1
+      '/': 2,
+      '+': 1,
+      '-': 1
     };
     this.outputQueue = [];
     this.operatorStack = [];

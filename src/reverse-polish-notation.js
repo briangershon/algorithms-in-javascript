@@ -1,7 +1,7 @@
-// Supports + and * operators.
+// Supports *, /, + and - operators.
 class ReversePolish {
   calculate(tokens) {
-    const operators = ['+', '*'];
+    const operators = ['+', '*', '-', '/'];
     const stack = [];
 
     for (let i = 0; i < tokens.length; i++) {
@@ -10,15 +10,27 @@ class ReversePolish {
         continue;
       }
       if (tokens[i] === '+') {
-        const left = stack.pop();
         const right = stack.pop();
+        const left = stack.pop();
         stack.push(left + right);
         continue;
       }
-      if (tokens[i] === '*') {
-        const left = stack.pop();
+      if (tokens[i] === '-') {
         const right = stack.pop();
+        const left = stack.pop();
+        stack.push(left - right);
+        continue;
+      }
+      if (tokens[i] === '*') {
+        const right = stack.pop();
+        const left = stack.pop();
         stack.push(left * right);
+        continue;
+      }
+      if (tokens[i] === '/') {
+        const right = stack.pop();
+        const left = stack.pop();
+        stack.push(left / right);
         continue;
       }
     }

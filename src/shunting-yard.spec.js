@@ -21,4 +21,12 @@ describe('ShuntingYard returns Reverse Polish Notation', () => {
     const yard = new ShuntingYard();
     expect(yard.toReversePolishNotation('( 7 * 100 + 83 ) * 1000 + ( 9 * 100 + 19 )')).toEqual([7, 100, '*', 83, '+', 1000, '*', 9, 100, '*', 19, '+', '+']);
   });
+  test('when dividing two values', () => {
+    const yard = new ShuntingYard();
+    expect(yard.toReversePolishNotation('100 / 2')).toEqual([100, 2, '/']);
+  });
+  test('when dividing and subtracting values', () => {
+    const yard = new ShuntingYard();
+    expect(yard.toReversePolishNotation('100 / 2 - 46')).toEqual([100, 2, '/', 46, '-']);
+  });
 });
