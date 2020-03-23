@@ -18,9 +18,7 @@ Additional Notes:
     All tested numbers are valid, you don't need to validate them
 */
 
-import ShuntingYard from './shunting-yard';
-import ReversePolish from './reverse-polish-notation';
-
+// start at biggest multiplier and recurse on left and right sides from there
 class ParseInt {
   constructor() {
     this.values = {
@@ -56,46 +54,50 @@ class ParseInt {
       'thousand': 1000,
       'million': 1000000
     };
-
-    this.multipliers = {
-      'hundred': 100,
-      'thousand': 1000,
-      'million': 1000000
-    };
   }
 
   parseInt(string) {
-    const p = new ReversePolish();
-    return p.calculate(this.parse(string));
+    // recursively multiply and add, starting at highest multiplier (million, thousand, hundred)
+    return this.recursiveParse(this.wordsToNumbers(string));
   }
 
-  // Convert "words" into an infix formula,
-  // then convert into Reverse Polish notation.
-  parse(string) {
-    const s = string.split(' ');
-    const equation = [];
+  
+  recursiveParse(nums) {
+    if (nums.length === 1) return nums[0];
 
-    for (let i = 0; i < s.length; i++) {
-      const tokenValue = this.values[s[i]];
-      if (tokenValue && !this.multipliers[s[i]]) {
-        equation.push(Number(tokenValue));
+    const highestNumber = nums.reduce((acc, current) => {
+      if (current > acc) {
+        return current;
       }
+      return acc;
+    });
+    const highestIndex = nums.indexOf(highestNumber);
 
-      if (this.multipliers[s[i]]) {
-        equation.push('*');
-        equation.push(this.multipliers[s[i]]);
+    // recurse by multiplying results of left side, and adding results of right side
+    return this.recursiveParse(nums.slice(0, highestIndex)) *
+      nums[highestIndex] +
+      this.recursiveParse(nums.slice(highestIndex + 1));
+  }
+
+  // Convert "words" to "numbers".
+  // Also handle converting numbers with a dash e.g. `sixty-five`
+  wordsToNumbers(string) {
+    const values = this.values;
+
+    // strip out 'and'
+    const validTokensOnly = string.split(' ').filter((token) => {
+      return token !== 'and';
+    });
+
+    // convert array of word strings to actual numbers
+    return validTokensOnly.map((token) => {
+      if (values[token]) return Number(values[token]);
+
+      if (token.indexOf('-') > -1) {
+        const [left, right] = token.split('-');
+        return Number(values[left]) + Number(values[right]);
       }
-
-      if (s[i].indexOf('-') > -1) {
-        const [left, right] = s[i].split('-');
-        equation.push('+');
-        equation.push(Number(this.values[left]) + Number(this.values[right]));
-      }
-    }
-    console.log(string, '==>', equation.join(' '));
-
-    const yard = new ShuntingYard();
-    return yard.toReversePolishNotation(equation.join(' '));
+    });
   }
 }
 

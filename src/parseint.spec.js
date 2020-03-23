@@ -9,8 +9,8 @@ describe('ParseInt', () => {
     const p = new ParseInt();
     expect(p.parseInt('two hundred forty-six')).toEqual(246);
   });
-  // test('when there are two multipliers', () => {
-  //   const p = new ParseInt();
-  //   expect(p.parseInt('seven hundred eighty-three thousand nine hundred and nineteen')).toEqual(783919);
-  // });
+  test('when there are two multipliers', () => {
+    const p = new ParseInt();
+    expect(p.parseInt('seven hundred eighty-three thousand nine hundred and nineteen')).toEqual(783919);
+  });
 });
