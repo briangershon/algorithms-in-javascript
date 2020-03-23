@@ -36,7 +36,7 @@ class HashTable {
     if (this.data[hash]) {
       const nodes = this.data[hash].allNodes();
       for (let i = 0; i < nodes.length; i += 1) {
-        const node = nodes[i]
+        const node = nodes[i];
         if (node.key === key) {
           return node.value;
         }

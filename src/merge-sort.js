@@ -48,7 +48,7 @@ class MergeSort {
   }
 
   sort() {
-    this.data = this.sortRecursive(this.data)
+    this.data = this.sortRecursive(this.data);
   }
 
   toString() {
