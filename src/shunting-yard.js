@@ -28,7 +28,7 @@ class ShuntingYard {
     this.outputQueue = [];
     this.operatorStack = [];
 
-    const s = string.split(' ');
+    const s = this.cleanFormat(string).split(' ');
     for (let i = 0; i < s.length; i++) {
       const token = s[i];
       if (this.isOperator(token) || token === '(' || token === ')') {
@@ -39,6 +39,48 @@ class ShuntingYard {
     }
     this.add(null);
     return this.output();
+  }
+
+  // converts badly formatted expressions into a nice expression with proper whitespace.
+  // supports negation of parens expressions eg "-()" by converting to "0 - ()"
+  cleanFormat(string) {
+    // add space around operators, except for minus before numbers and left parenthesis
+    const nice = string.split('').reduce((acc, c, index, array) => {
+      const nextChar = (index - 1 < array.length) ? array[index + 1] : null;
+      const prevChar = (index - 1 >= 0) ? array[index - 1] : null;
+
+      if (c === '(') {
+        if (prevChar === '-') {
+          return `${acc}${c} `;  // unary minus
+        }
+        return `${acc} ${c} `;
+      }
+
+      if (c === '-') {
+        // is unary minus?
+        if ((nextChar === '(' || nextChar === Number(nextChar).toString())
+            && (prevChar === null || prevChar === ' ' || prevChar === '(')) {
+          if (nextChar === '(') {
+            return `${acc}0 ${c} `;
+          }
+          return `${acc}${c}`;
+        }
+        // otherwise '-' is a minus and not a unary operator
+        return `${acc} ${c} `;
+      }
+
+      if (['+', '*', '/', '(', ')'].indexOf(c) > -1) {
+        return `${acc} ${c} `;
+      }
+
+      return `${acc}${c}`;
+    }, '');
+
+    // split by space and get rid of all the extra spaces
+    const noExtraSpaces = nice.split(' ').filter((item) => {
+      if (item !== '') return item;
+    });
+    return noExtraSpaces.join(' ');
   }
 
   isOperator(token) {
