@@ -15,6 +15,7 @@ How to use this class? See `shunting-yard.spec.js`
 class ShuntingYard {
   constructor() {
     this.operatorPrecedence = {
+      'm': 3,  // unary minus
       '*': 2,
       '/': 2,
       '+': 1,
@@ -62,7 +63,7 @@ class ShuntingYard {
             && (prevChar === null || prevChar === ' ' || prevChar === '(' || prevChar === '+' || prevChar === '-' || prevChar === '*' || prevChar === '/')) {
           // is it a unary minus in front of a paren?
           if (nextChar === '(' && !prevNonWhitespaceCharIsANumber) {
-            return `${acc}0 ${c} `;
+            return `${acc} m `;
           }
           // it's a unary minus next to a number
           if (!prevNonWhitespaceCharIsANumber) {
@@ -113,7 +114,7 @@ class ShuntingYard {
     do {
       operator = this.operatorStack.pop();
       if (!operator || operator === '(') {
-        operator == null;
+        operator = null;
       } else {
         this.outputQueue.push(operator);
       }
