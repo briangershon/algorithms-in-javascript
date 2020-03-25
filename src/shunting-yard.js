@@ -15,6 +15,7 @@ How to use this class? See `shunting-yard.spec.js`
 class ShuntingYard {
   constructor() {
     this.operatorPrecedence = {
+      'm': 3,  // unary minus
       '*': 2,
       '/': 2,
       '+': 1,
@@ -28,7 +29,7 @@ class ShuntingYard {
     this.outputQueue = [];
     this.operatorStack = [];
 
-    const s = string.split(' ');
+    const s = this.cleanFormat(string).split(' ');
     for (let i = 0; i < s.length; i++) {
       const token = s[i];
       if (this.isOperator(token) || token === '(' || token === ')') {
@@ -39,6 +40,53 @@ class ShuntingYard {
     }
     this.add(null);
     return this.output();
+  }
+
+  // converts badly formatted expressions into a nice expression with proper whitespace.
+  // supports negation of parens expressions eg "-()" by adding a new 'm' operator for unary minus.
+  cleanFormat(string) {
+    // add space around operators, except for minus before numbers and left parenthesis
+    const nice = string.split('').reduce((acc, c, index, array) => {
+      const nextChar = (index - 1 < array.length) ? array[index + 1] : null;
+      const prevChar = (index - 1 >= 0) ? array[index - 1] : null;
+      let prevNonWhitespaceCharIsANumber = null;
+      for (let i = index - 1; i > 0; i--) {
+        if (array[i] !== ' ') {
+          prevNonWhitespaceCharIsANumber = '0123456789'.indexOf(array[i]) > -1;
+          break;
+        }
+      }
+
+      if (c === '-') {
+        // is this character a unary operator, or a minus?
+        if ((nextChar === '(' || nextChar === Number(nextChar).toString())
+            && (prevChar === null || prevChar === ' ' || prevChar === '(' || prevChar === '+' || prevChar === '-' || prevChar === '*' || prevChar === '/')) {
+          // is it a unary minus in front of a paren?
+          if (nextChar === '(' && !prevNonWhitespaceCharIsANumber) {
+            return `${acc} m `;
+          }
+          // it's a unary minus next to a number
+          if (!prevNonWhitespaceCharIsANumber) {
+            return `${acc}${c}`;
+          }
+          return `${acc}${c} `; // it's a minus, not a unary minus
+        }
+        // it's a minus, not a unary minus
+        return `${acc} ${c} `;
+      }
+
+      if (['+', '*', '/', '(', ')'].indexOf(c) > -1) {
+        return `${acc} ${c} `;
+      }
+
+      return `${acc}${c}`;
+    }, '');
+
+    // split by space and get rid of all the extra spaces
+    const noExtraSpaces = nice.split(' ').filter((item) => {
+      if (item !== '') return item;
+    });
+    return noExtraSpaces.join(' ');
   }
 
   isOperator(token) {
@@ -66,7 +114,7 @@ class ShuntingYard {
     do {
       operator = this.operatorStack.pop();
       if (!operator || operator === '(') {
-        operator == null;
+        operator = null;
       } else {
         this.outputQueue.push(operator);
       }

@@ -21,4 +21,12 @@ describe('ReversePolish', () => {
     const notation = new ReversePolish();
     expect(notation.calculate([100, 2, '/', 50, '+', 1000, '*', 12, 4, '/', 19, '+', '-'])).toEqual(99978);
   });
+  test('supports unary minus', () => {
+    const notation = new ReversePolish();
+    expect(notation.calculate([12, 123, '*', -5, 2, '+', 'm', '/'])).toEqual(492);
+  });
+  test('supports unary minus', () => {
+    const notation = new ReversePolish();
+    expect(notation.calculate([123.45, 678.90, -2.5, 11.5, '+', '/', 80, 19, '-', 33.25, '*', '-', '*', 20, '/', 11, '+'])).toEqual(-12042.760875);
+  });
 });
