@@ -48,24 +48,29 @@ class ShuntingYard {
     const nice = string.split('').reduce((acc, c, index, array) => {
       const nextChar = (index - 1 < array.length) ? array[index + 1] : null;
       const prevChar = (index - 1 >= 0) ? array[index - 1] : null;
-
-      if (c === '(') {
-        if (prevChar === '-') {
-          return `${acc}${c} `;  // unary minus
+      let prevNonWhitespaceCharIsANumber = null;
+      for (let i = index - 1; i > 0; i--) {
+        if (array[i] !== ' ') {
+          prevNonWhitespaceCharIsANumber = '0123456789'.indexOf(array[i]) > -1;
+          break;
         }
-        return `${acc} ${c} `;
       }
 
       if (c === '-') {
-        // is unary minus?
+        // is this character a unary operator, or a minus?
         if ((nextChar === '(' || nextChar === Number(nextChar).toString())
-            && (prevChar === null || prevChar === ' ' || prevChar === '(')) {
-          if (nextChar === '(') {
+            && (prevChar === null || prevChar === ' ' || prevChar === '(' || prevChar === '+' || prevChar === '-' || prevChar === '*' || prevChar === '/')) {
+          // is it a unary minus in front of a paren?
+          if (nextChar === '(' && !prevNonWhitespaceCharIsANumber) {
             return `${acc}0 ${c} `;
           }
-          return `${acc}${c}`;
+          // it's a unary minus next to a number
+          if (!prevNonWhitespaceCharIsANumber) {
+            return `${acc}${c}`;
+          }
+          return `${acc}${c} `; // it's a minus, not a unary minus
         }
-        // otherwise '-' is a minus and not a unary operator
+        // it's a minus, not a unary minus
         return `${acc} ${c} `;
       }
 
