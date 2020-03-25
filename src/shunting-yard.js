@@ -43,7 +43,7 @@ class ShuntingYard {
   }
 
   // converts badly formatted expressions into a nice expression with proper whitespace.
-  // supports negation of parens expressions eg "-()" by converting to "0 - ()"
+  // supports negation of parens expressions eg "-()" by adding a new 'm' operator for unary minus.
   cleanFormat(string) {
     // add space around operators, except for minus before numbers and left parenthesis
     const nice = string.split('').reduce((acc, c, index, array) => {
