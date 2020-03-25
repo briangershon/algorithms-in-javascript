@@ -1,7 +1,7 @@
-// Supports *, /, + and - operators.
+// Supports *, /, + and - operators. 'm' is unary minus.
 class ReversePolish {
   calculate(tokens) {
-    const operators = ['+', '*', '-', '/'];
+    const operators = ['+', '*', '-', '/', 'm'];
     const stack = [];
 
     for (let i = 0; i < tokens.length; i++) {
@@ -31,6 +31,11 @@ class ReversePolish {
         const right = stack.pop();
         const left = stack.pop();
         stack.push(left / right);
+        continue;
+      }
+      if (tokens[i] === 'm') {
+        const right = stack.pop();
+        stack.push(-right);
         continue;
       }
     }
