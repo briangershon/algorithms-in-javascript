@@ -2,13 +2,17 @@
 
 Includes:
 
-* Sorts: Bubble Sort, Merge Sort
-* Hash Table
-* Linked List (only with methods needed for HashTable)
-* Binary Search Tree
-* Binary Search Tree (Left-leaning Red/Black) (to keep tree continually balanced)
-* Shunting Yard (to convert infix notation to reverse-polish notation)
-* Reverse Polish Notation (calculate result from postfix notation)
+* Sorts:
+  * Bubble Sort (`src/bubble-sort.js`)
+  * Merge Sort (`src/merge-sort.js`)
+* Hash Table (`src/hash-table.js`)
+* Linked List (only with methods needed for HashTable) (`src/linked-list.js`)
+* Fibonacci (`src/fibonacci.js`)
+* Binary Search Tree (`src/binary-search-tree.js`)
+* Binary Search Tree (Left-leaning Red/Black) (to keep tree continually balanced) (`src/binary-search-tree-red-black.js`)
+* Shunting Yard (to convert infix notation to reverse-polish notation) (`src/shunting-yard.js`)
+* Reverse Polish Notation (calculate result from postfix notation) (`src/reverse-polish-notation.js`)
+* All permutations of an array (`src/permutation.js`)
 
 ## Codewars
 
