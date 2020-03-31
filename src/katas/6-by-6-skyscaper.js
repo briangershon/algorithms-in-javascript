@@ -11,6 +11,22 @@ Strategy:
 class SixBySixSkyscraper {
   solvePuzzle(clues) {
     let board = new Board([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], clues);
+
+    let count = 10000;
+    let potentialCount = 0;
+    while (board.board && count > 0) {
+      // console.log('count', count);
+      // console.log('next', board.nextBoard().board);
+      if (!board.rejected()) {
+        // console.log('potential', board.board.slice(-7));
+        potentialCount++;
+      }
+      count--;
+      board = board.nextBoard();
+      // console.log('board', board.board);
+    }
+
+    console.log('potential count', potentialCount);
     // console.log('board.rejected()', board.rejected());
     return board.twoDimensionalArray();
   }
@@ -24,8 +40,26 @@ class Board {
     this.clues = cluesArray;
   }
 
+  // naive next function that just increments to next numeric one
   nextBoard() {
+    let next = [];
+    let carry = 1;  // increment first one
 
+    if (this.board[0] === 6) return new Board(null);
+
+    for (let i = 35; i >= 0; i--) {
+      if (carry) {
+        this.board[i] += carry;
+        carry = 0;
+      }
+      if (this.board[i] > 6) {
+        this.board[i] = 1;
+        carry = true;
+      }
+      next.unshift(this.board[i]);
+    }
+
+    return new Board(next, this.clues);
   }
 
   // check all 24 restraints, if any fail, return true
@@ -106,6 +140,20 @@ class Board {
       array = this.getRowRight(num);
       break;
     }
+
+    // if any dups of 1,2,3,4,5 or 6 reject!
+    const counts = {};
+    for (let i = 0; i < 6; i++) {
+      const el = array[i];
+      if (counts[el]) {
+        // console.log('reject due to DUPLICATE', array, counts);
+        return true;  // there's more than one
+      }
+      if (el !== 0) {  // don't count 0's
+        counts[el] = 1;
+      }
+    }
+
     if (this.countSkyscrapers(array, clue) > clue) {
       // console.log('rejected', direction, num);
       return true;
