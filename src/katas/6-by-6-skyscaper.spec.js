@@ -10,6 +10,7 @@ describe('SixBySixSkyscraper', () => {
       3, 2, 1, 2, 2, 4
     ];
     const result = s.solvePuzzle(clues);
+    expect(result).toEqual(true);
     // expect(result[0]).toEqual([ 2, 1, 4, 3, 5, 6]);
     // expect(result[1]).toEqual([ 1, 6, 3, 2, 4, 5]);
     // expect(result[2]).toEqual([ 4, 3, 6, 5, 1, 2]);
@@ -17,23 +18,64 @@ describe('SixBySixSkyscraper', () => {
     // expect(result[4]).toEqual([ 5, 4, 1, 6, 2, 3]);
     // expect(result[5]).toEqual([ 3, 2, 5, 4, 6, 1]);
   });
+
+  // test('can solve 6x6 puzzle 2', () => {
+  //   const s = new SixBySixSkyscraper();
+  //   const clues = [
+  //     0, 0, 0, 2, 2, 0,
+  //     0, 0, 0, 6, 3, 0,
+  //     0, 4, 0, 0, 0, 0,
+  //     4, 4, 0, 3, 0, 0
+  //   ];
+  //   const result = s.solvePuzzle(clues);
+  //   expect(result).toEqual(true);
+
+  //   // var expected = [[ 5, 6, 1, 4, 3, 2 ], 
+  //   // [ 4, 1, 3, 2, 6, 5 ], 
+  //   // [ 2, 3, 6, 1, 5, 4 ], 
+  //   // [ 6, 5, 4, 3, 2, 1 ], 
+  //   // [ 1, 2, 5, 6, 4, 3 ], 
+  //   // [ 3, 4, 2, 5, 1, 6 ]];
+
+  // });
+
+  // test('can solve 6x6 puzzle 3', () => {
+  //   const s = new SixBySixSkyscraper();
+  //   const clues = [
+  //     0, 3, 0, 5, 3, 4, 
+  //     0, 0, 0, 0, 0, 1,
+  //     0, 3, 0, 3, 2, 3,
+  //     3, 2, 0, 3, 1, 0
+  //   ];
+  //   const result = s.solvePuzzle(clues);
+  //   expect(result).toEqual(true);
+
+  //   // var expected = [[ 5, 2, 6, 1, 4, 3 ], 
+  //   // [ 6, 4, 3, 2, 5, 1 ], 
+  //   // [ 3, 1, 5, 4, 6, 2 ], 
+  //   // [ 2, 6, 1, 5, 3, 4 ], 
+  //   // [ 4, 3, 2, 6, 1, 5 ], 
+  //   // [ 1, 5, 4, 3, 2, 6 ]];
+  // });
+
 });
 
 describe('Board', () => {
   test('get various rows/columns in both directions', () => {
-    const b = new Board([
-      2, 1, 4, 3, 5, 6,
-      1, 6, 3, 2, 4, 5,
-      4, 3, 6, 5, 1, 2,
-      6, 5, 2, 1, 3, 4,
-      5, 4, 1, 6, 2, 3,
-      3, 2, 5, 4, 6, 1
-    ], [
+    const perms = [
+      [2, 1, 4, 3, 5, 6],
+      [1, 6, 3, 2, 4, 5],
+      [4, 3, 6, 5, 1, 2],
+      [6, 5, 2, 1, 3, 4],
+      [5, 4, 1, 6, 2, 3],
+      [3, 2, 5, 4, 6, 1]
+    ];
+    const b = new Board([0, 1, 2, 3, 4, 5], [
       3, 2, 2, 3, 2, 1,
       1, 2, 3, 3, 2, 2,
       5, 1, 2, 2, 4, 3,
       3, 2, 1, 2, 2, 4
-    ]);
+    ], perms);
     expect(b.getColumnDown(0)).toEqual([2, 1, 4, 6, 5, 3]);
     expect(b.getColumnUp(0)).toEqual([2, 1, 4, 6, 5, 3].reverse());
     expect(b.getRowRight(0)).toEqual([2, 1, 4, 3, 5, 6]);
@@ -49,77 +91,165 @@ describe('Board', () => {
     expect(b.countSkyscrapers([1, 2, 5, 6, 4, 3], 6)).toEqual(4);
     expect(b.countSkyscrapers([1, 2, 5, 6, 4, 3].reverse(), 6)).toEqual(3);
   });
-  test('Solved', () => {
-    const b = new Board([
-      2, 1, 4, 3, 5, 6,
-      1, 6, 3, 2, 4, 5,
-      4, 3, 6, 5, 1, 2,
-      6, 5, 2, 1, 3, 4,
-      5, 4, 1, 6, 2, 3,
-      3, 2, 5, 4, 6, 1
-    ], [
-      3, 2, 2, 3, 2, 1,
-      1, 2, 3, 3, 2, 2,
-      5, 1, 2, 2, 4, 3,
-      3, 2, 1, 2, 2, 4
-    ]);
-    expect(b.rejected()).toEqual(false);
-    expect(b.solved()).toEqual(true);
+
+  describe('solved', () => {
+    test('Solved (all)', () => {
+      const permutations = [
+        [2, 1, 4, 3, 5, 6],
+        [1, 6, 3, 2, 4, 5],
+        [4, 3, 6, 5, 1, 2],
+        [6, 5, 2, 1, 3, 4],
+        [5, 4, 1, 6, 2, 3],
+        [3, 2, 5, 4, 6, 1]
+      ];
+      const b = new Board([0, 1, 2, 3, 4, 5], [
+        3, 2, 2, 3, 2, 1,
+        1, 2, 3, 3, 2, 2,
+        5, 1, 2, 2, 4, 3,
+        3, 2, 1, 2, 2, 4
+      ], permutations);
+      expect(b.rejected()).toEqual(false);
+      expect(b.solved()).toEqual(true);
+    });  
+    test('Unrejected partial (row one)', () => {
+      const permutations = [
+        [2, 1, 4, 3, 5, 6],
+        [1, 6, 3, 2, 4, 5],
+        [4, 3, 6, 5, 1, 2],
+        [6, 5, 2, 1, 3, 4],
+        [5, 4, 1, 6, 2, 3],
+        [3, 2, 5, 4, 6, 1]
+      ];
+      const b = new Board([0], [
+        3, 2, 2, 3, 2, 1,
+        1, 2, 3, 3, 2, 2,
+        5, 1, 2, 2, 4, 3,
+        3, 2, 1, 2, 2, 4
+      ], permutations);
+      expect(b.rejected()).toEqual(false);
+    });  
+    test('Unrejected partial (plus row two)', () => {
+      const permutations = [
+        [2, 1, 4, 3, 5, 6],
+        [1, 6, 3, 2, 4, 5],
+        [4, 3, 6, 5, 1, 2],
+        [6, 5, 2, 1, 3, 4],
+        [5, 4, 1, 6, 2, 3],
+        [3, 2, 5, 4, 6, 1]
+      ];
+      const b = new Board([0, 1], [
+        3, 2, 2, 3, 2, 1,
+        1, 2, 3, 3, 2, 2,
+        5, 1, 2, 2, 4, 3,
+        3, 2, 1, 2, 2, 4
+      ], permutations);
+      expect(b.rejected()).toEqual(false);
+    });  
+    test('Unrejected partial (plus row three)', () => {
+      const permutations = [
+        [2, 1, 4, 3, 5, 6],
+        [1, 6, 3, 2, 4, 5],
+        [4, 3, 6, 5, 1, 2],
+        [6, 5, 2, 1, 3, 4],
+        [5, 4, 1, 6, 2, 3],
+        [3, 2, 5, 4, 6, 1]
+      ];
+      const b = new Board([0, 1, 2], [
+        3, 2, 2, 3, 2, 1,
+        1, 2, 3, 3, 2, 2,
+        5, 1, 2, 2, 4, 3,
+        3, 2, 1, 2, 2, 4
+      ], permutations);
+      expect(b.rejected()).toEqual(false);
+    });  
+    test('Unrejected partial (plus row four)', () => {
+      const permutations = [
+        [2, 1, 4, 3, 5, 6],
+        [1, 6, 3, 2, 4, 5],
+        [4, 3, 6, 5, 1, 2],
+        [6, 5, 2, 1, 3, 4],
+        [5, 4, 1, 6, 2, 3],
+        [3, 2, 5, 4, 6, 1]
+      ];
+      const b = new Board([0, 1, 2, 3], [
+        3, 2, 2, 3, 2, 1,
+        1, 2, 3, 3, 2, 2,
+        5, 1, 2, 2, 4, 3,
+        3, 2, 1, 2, 2, 4
+      ], permutations);
+      expect(b.rejected()).toEqual(false);
+    });  
+    test('Unrejected partial (plus row five)', () => {
+      const permutations = [
+        [2, 1, 4, 3, 5, 6],
+        [1, 6, 3, 2, 4, 5],
+        [4, 3, 6, 5, 1, 2],
+        [6, 5, 2, 1, 3, 4],
+        [5, 4, 1, 6, 2, 3],
+        [3, 2, 5, 4, 6, 1]
+      ];
+      const b = new Board([0, 1, 2, 3, 4], [
+        3, 2, 2, 3, 2, 1,
+        1, 2, 3, 3, 2, 2,
+        5, 1, 2, 2, 4, 3,
+        3, 2, 1, 2, 2, 4
+      ], permutations);
+      expect(b.rejected()).toEqual(false);
+    });
+    test('Unrejected partial (plus row six) and solved', () => {
+      const permutations = [
+        [2, 1, 4, 3, 5, 6],
+        [1, 6, 3, 2, 4, 5],
+        [4, 3, 6, 5, 1, 2],
+        [6, 5, 2, 1, 3, 4],
+        [5, 4, 1, 6, 2, 3],
+        [3, 2, 5, 4, 6, 1]
+      ];
+      const b = new Board([0, 1, 2, 3, 4, 5], [
+        3, 2, 2, 3, 2, 1,
+        1, 2, 3, 3, 2, 2,
+        5, 1, 2, 2, 4, 3,
+        3, 2, 1, 2, 2, 4
+      ], permutations);
+      expect(b.rejected()).toEqual(false);
+      expect(b.solved()).toEqual(true);
+    });  
   });
-  test('Rejected', () => {
-    const b = new Board([
-      1, 2, 3, 4, 5, 6,
-      2, 3, 4, 5, 6, 1,
-      3, 4, 5, 6, 1, 2,
-      4, 5, 6, 1, 2, 3,
-      5, 6, 1, 2, 3, 4,
-      6, 1, 2, 3, 4, 5
-    ], [
+
+  test('Rejected in situation when there are no zeros in line', () => {
+    const perms = [
+      [1, 2, 3, 4, 5, 6],
+      [2, 3, 4, 5, 6, 1],
+      [3, 4, 5, 6, 1, 2],
+      [4, 5, 6, 1, 2, 3],
+      [5, 6, 1, 2, 3, 4],
+      [6, 1, 2, 3, 4, 5]
+    ];
+    const b = new Board([0, 1, 2, 3, 4, 5], [
       3, 2, 2, 3, 2, 1,
       1, 2, 3, 3, 2, 2,
       5, 1, 2, 2, 4, 3,
       3, 2, 1, 2, 2, 4
-    ]);
+    ], perms);
     expect(b.rejected()).toEqual(true);
     expect(b.solved()).toEqual(false);
   });
-
-  test('next board', () => {
-    const b = new Board([
-      1, 1, 1, 1, 1, 1,
-      1, 1, 1, 1, 1, 1,
-      1, 1, 1, 1, 1, 1,
-      1, 1, 1, 1, 1, 1,
-      1, 1, 1, 1, 1, 1,
-      1, 1, 1, 1, 1, 1
-    ], [
+  test('should reject in situation where there are zeros in this row', () => {
+    const perms = [
+      [1, 5, 2, 3, 4, 6],
+      [0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0]
+    ];
+    const b = new Board([0, 1, 2, 3, 4, 5], [
       3, 2, 2, 3, 2, 1,
       1, 2, 3, 3, 2, 2,
       5, 1, 2, 2, 4, 3,
       3, 2, 1, 2, 2, 4
-    ]);
-    expect(b.nextBoard().board).toEqual([1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2]);
-    expect(b.nextBoard().board).toEqual([1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,3]);
-    expect(b.nextBoard().board).toEqual([1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,4]);
-    expect(b.nextBoard().board).toEqual([1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,5]);
-    expect(b.nextBoard().board).toEqual([1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,6]);
-    expect(b.nextBoard().board).toEqual([1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1]);
-    expect(b.nextBoard().board).toEqual([1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2]);
-  });
-  test('last board', () => {
-    const b = new Board([
-      6, 6, 6, 6, 6, 6,
-      6, 6, 6, 6, 6, 6,
-      6, 6, 6, 6, 6, 6,
-      6, 6, 6, 6, 6, 6,
-      6, 6, 6, 6, 6, 6,
-      6, 6, 6, 6, 6, 6
-    ], [
-      3, 2, 2, 3, 2, 1,
-      1, 2, 3, 3, 2, 2,
-      5, 1, 2, 2, 4, 3,
-      3, 2, 1, 2, 2, 4
-    ]);
-    expect(b.nextBoard().board).toEqual(null);
+    ], perms);
+    expect(b.getRowRight(0)).toEqual([1, 5, 2, 3, 4, 6]);
+    expect(b.rejected()).toEqual(true);
   });
 });

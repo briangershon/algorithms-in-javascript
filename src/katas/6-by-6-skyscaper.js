@@ -4,62 +4,95 @@
 Strategy:
 
 * Cache all permutations of a line of 6 skyscrapers
-* Use clues on the board to narrow down combinations
-* Fill in the rest of the board by trying matching permuations
+* Use clues on the board to reject boards that have wrong combination of rows.
+* Think of as a maze backtracking problem and each row is a move.
 
 */
+
+import 'core-js/stable';
+import 'regenerator-runtime/runtime';
+import Permutation from '../permutation';
+
 class SixBySixSkyscraper {
-  solvePuzzle(clues) {
-    let board = new Board([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], clues);
+  constructor() {
+    this.permutations = new Permutation().permutations([1, 2, 3, 4, 5, 6]);
+  }
 
-    let count = 10000;
-    let potentialCount = 0;
-    while (board.board && count > 0) {
-      // console.log('count', count);
-      // console.log('next', board.nextBoard().board);
-      if (!board.rejected()) {
-        // console.log('potential', board.board.slice(-7));
-        potentialCount++;
+  // solve 6 rows (6 generations of moves)
+  // start with row 1, pick a permutation. if rejected, pick next permutation
+  // if not rejected, row 2 is next. Pick a permutation.
+
+  // board = [721]
+  // board = [721, 722]
+  // board = [721, 722, 5]
+  // board = [721, 722, 5, 22]
+  // board = [721, 722, 5, 22, 322]
+  // board = [721, 722, 5, 22, 322, 123]
+
+  // recursive function
+  nextGeneration(boardArray) {
+    for (let row = 0; row < 720; row++) {
+
+      // if successfully found, return true to make sure each recursive loop exits
+      if (boardArray.length === 6) {
+        const potentiallySolvedBoard = new Board(boardArray, this.clues, this.permutations);
+        if (potentiallySolvedBoard.solved()) {
+          potentiallySolvedBoard.show();
+          return true;
+        }
       }
-      count--;
-      board = board.nextBoard();
-      // console.log('board', board.board);
-    }
+      const newBoardArray = Array.from(boardArray);
+      newBoardArray.push(row);
+      const board = new Board(newBoardArray, this.clues, this.permutations);
 
-    console.log('potential count', potentialCount);
-    // console.log('board.rejected()', board.rejected());
-    return board.twoDimensionalArray();
+      if (board.rejected()) {
+        continue;
+      }
+
+      const done = this.nextGeneration(newBoardArray);
+      if (done) {
+        return true;
+      }
+    }
+  }
+
+  solvePuzzle(clues) {
+    this.clues = clues;
+    const done = this.nextGeneration([]);
+    return done;
+    // return board.twoDimensionalArray();
   }
 }
 
 // Represent a 6x6 board
-// Input is a 36 element array and clues
+// Input is:
+//   - a 6 element array, each elements is in permutations index
+//   - and clues
 class Board {
-  constructor(boardArray, cluesArray) {
-    this.board = boardArray;
-    this.clues = cluesArray;
-  }
+  constructor(boardArray, cluesArray, permutations) {
+    this.board = [];
 
-  // naive next function that just increments to next numeric one
-  nextBoard() {
-    let next = [];
-    let carry = 1;  // increment first one
-
-    if (this.board[0] === 6) return new Board(null);
-
-    for (let i = 35; i >= 0; i--) {
-      if (carry) {
-        this.board[i] += carry;
-        carry = 0;
+    if (boardArray) {
+      for (let i = 0; i < 6; i++) {
+        if (boardArray[i] !== undefined) {
+          for (let j = 0; j < 6; j++) {
+            this.board.push(permutations[boardArray[i]][j]);
+          }
+        } else {
+          // fill with zeros
+          for (let j = 0; j < 6; j++) {
+            this.board.push(0);
+          }
+        }
       }
-      if (this.board[i] > 6) {
-        this.board[i] = 1;
-        carry = true;
+    } else {
+      // fill with zeros
+      for (let j = 0; j < 36; j++) {
+        this.board.push(0);
       }
-      next.unshift(this.board[i]);
     }
 
-    return new Board(next, this.clues);
+    this.clues = cluesArray;
   }
 
   // check all 24 restraints, if any fail, return true
@@ -124,7 +157,7 @@ class Board {
   }
 
   rejectLine(clue, direction, num) {
-    if (clue === 0) return false; // consider things to be good
+    if (clue === 0) return false; // missing clue, consider things to be good
     let array;
     switch (direction) {
     case 'col-down':
@@ -146,7 +179,6 @@ class Board {
     for (let i = 0; i < 6; i++) {
       const el = array[i];
       if (counts[el]) {
-        // console.log('reject due to DUPLICATE', array, counts);
         return true;  // there's more than one
       }
       if (el !== 0) {  // don't count 0's
@@ -154,9 +186,20 @@ class Board {
       }
     }
 
-    if (this.countSkyscrapers(array, clue) > clue) {
-      // console.log('rejected', direction, num);
-      return true;
+    // if there are zeros in the row use ">" otherwise use "!=="
+    const count = this.countSkyscrapers(array, clue);
+    if (array.filter((el) => el !== 0).length == 6) {
+      // no zeros
+      if (count !== clue) {
+        return true;
+      }
+    } else {
+      // there are zeros
+      // skip and line that stats with zero to not screw up calculation.
+      //   which is mainly col-up since these are zeros until the last move (last row added)
+      if (array[0] > 0 && this.countSkyscrapers(array, clue) > clue) {
+        return true;
+      }
     }
     return false;
   }
