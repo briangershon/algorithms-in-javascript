@@ -1,6 +1,16 @@
 # Algorithms written in JavaScript
 
-Includes:
+## To run the algorithms and code challenges
+
+First install the JavaScript dependencies with `npm install`
+
+Then run:
+
+    npm test
+
+I'd recommend adding the `eslint` plugin for your code editor. You can also run `npm run lint`.
+
+## Algorithms
 
 * Sorts:
   * Bubble Sort (`src/bubble-sort.js`)
@@ -14,15 +24,19 @@ Includes:
 * Reverse Polish Notation (calculate result from postfix notation) (`src/reverse-polish-notation.js`)
 * All permutations of an array (`src/permutation.js`)
 
-## Codewars
+## Codewars Challenges
+
+[What is Codewars and Code Katas?](https://www.briangershon.com/blog/code-katas/)
+
+For the more complex [codewars.com](https://www.codewars.com/r/CUDs2Q) katas, I've been coding and generalizing some of algorithms here -- see list above.
 
 <img src="https://www.codewars.com/users/briangershon/badges/small">
 
-For the more complex [codewars.com](https://www.codewars.com/r/CUDs2Q) katas, I've been implementing some of the needed algorithms here (see above).
+### Spoilers
 
-## To run
+Most of my solutions are on the Codewars' site. The following solutions represent my journey on more complex katas.
 
-    npm install
-    npm test
+For maximum fun and education, I recommend you solve these on your own without peeking.
 
-    npm run lint
+* parseInt() reloaded ([challenge description](https://www.codewars.com/kata/525c7c5ab6aecef16e0001a5)) `src/katas/parseint.js`
+* 6 By 6 Skyscrapers ([challenge description](https://www.codewars.com/kata/5679d5a3f2272011d700000d)) `src/katas/6-by-6-skyscraper.js`
