@@ -76,50 +76,90 @@ class SixBySixSkyscraper {
     return false; // didn't find a solution in this loop
   }
 
-  // rotates cues so that we start with the best clues as row 0
+  // rotates cues so that we start with the best clue at row 0
+  // to reduce number of initial iterations.
   bestPlaceToStart(incomingClues) {
-    let direction;
-    if (incomingClues[6] + incomingClues[23] >= incomingClues[11] + incomingClues[18]) {
-      direction = 'top';
-    } else {
-      direction = 'bottom';
+
+    // penalize clues that have more zeros
+    function weightedClue(clue) {
+      return clue ? clue : - 10;
     }
+
+    const sideClues = [
+      {
+        direction: 'top',
+        count:
+          weightedClue(incomingClues[6]) + weightedClue(incomingClues[7]) + weightedClue(incomingClues[6]) +
+          weightedClue(incomingClues[21]) + weightedClue(incomingClues[22]) + weightedClue(incomingClues[23])
+      },
+      {
+        direction: 'bottom',
+        count:
+          weightedClue(incomingClues[9]) + weightedClue(incomingClues[10]) + weightedClue(incomingClues[11]) +
+          weightedClue(incomingClues[18]) + weightedClue(incomingClues[19]) + weightedClue(incomingClues[20])
+      },
+      {
+        direction: 'left',
+        count:
+          weightedClue(incomingClues[0]) + weightedClue(incomingClues[1]) + weightedClue(incomingClues[2]) +
+          weightedClue(incomingClues[15]) + weightedClue(incomingClues[16]) + weightedClue(incomingClues[17])
+      },
+      {
+        direction: 'right',
+        count:
+          weightedClue(incomingClues[3]) +  weightedClue(incomingClues[4]) + weightedClue(incomingClues[5]) +
+          weightedClue(incomingClues[12]) + weightedClue(incomingClues[13]) + weightedClue(incomingClues[14])
+      }
+    ];
+    sideClues.sort((a, b) => b.count - a.count);
+    const bestDirection = sideClues[0].direction;
 
     let clues;
     let c1;
     let c2;
     let c3;
     let c4;
-    switch(direction) {
+    switch(bestDirection) {
     case 'top':
       clues = incomingClues;
       break;
-    case 'bottom':
+    case 'bottom': // shift bottom to the first row
       c1 = incomingClues.slice(12, 18).reverse();
       c2 = incomingClues.slice(6, 12).reverse();
       c3 = incomingClues.slice(0, 6).reverse();
       c4 = incomingClues.slice(18, 24).reverse();
       clues = c1.concat(c2).concat(c3).concat(c4);
       break;
+    case 'left': // shift left side to the first row
+      c1 = incomingClues.slice(18, 24);
+      c2 = incomingClues.slice(0, 18);
+      clues = c1.concat(c2);
+      break;
+    case 'right': // shift right side to the first row
+      c1 = incomingClues.slice(6, 24);
+      c2 = incomingClues.slice(0, 6);
+      clues = c1.concat(c2);
+      break;
     }
-
-    return { startAt: direction, clues: clues };
+    return { startAt: bestDirection, clues };
   }
 
   solvePuzzle(incomingClues) {
     const { startAt, clues } = this.bestPlaceToStart(incomingClues);
+
     this.startAt = startAt;
     this.clues = clues;
 
     // // debug
-    // const initialBoard = new Board([], this.clues, this.permutations);
+    // const initialBoard = new Board([], incomingClues, this.permutations);
     // initialBoard.show();
+    // const transformedBoard = new Board([], clues, this.permutations);
+    // transformedBoard.show();
     // return;
 
-    // Let's try building an array for each row separately based on row clues.
-    // Loop through them all. No path is guaranteed to be 100% correct, so
-    // need to try them all, but with a few items as possible.
-
+    // Build array of potential permutations for each row separately
+    // based on clues to reduce number of iterations overall.
+    // Without optimization, every loop would have 720 elements.
     const b = new Board();
     const rowClues = [];
     for (let row = 0; row < 6; row++) {
@@ -137,15 +177,8 @@ class SixBySixSkyscraper {
       rowClues.push({ row, perms });
     }
 
-    console.time('solve');
     const done = this.nextGeneration([], rowClues);
-    console.timeEnd('solve');
-    switch (this.startAt) {
-    case 'top':
-      return done.result.twoDimensionalArray();
-    case 'bottom':
-      return done.result.twoDimensionalArray().reverse();
-    }
+    return done.result.twoDimensionalArray(startAt);
   }
 }
 
@@ -306,10 +339,36 @@ class Board {
     return allNumbers && !this.rejected();
   }
 
-  twoDimensionalArray() {
+  twoDimensionalArray(direction) {
     const result = [];
-    for (let i = 0; i < 6; i++) {
-      result.push(this.board.slice(6 * i, 6 * i + 6));
+    switch (direction) {
+    case 'top':
+      for (let i = 0; i < 6; i++) {
+        result.push(this.board.slice(6 * i, 6 * i + 6));
+      }
+      return result;
+    case 'bottom':
+      for (let i = 0; i < 6; i++) {
+        result.push(this.board.slice(6 * i, 6 * i + 6));
+      }
+      return result.reverse();
+    case 'left':
+      for (let row = 0; row < 6; row++) {
+        const buildRow = [];
+        for (let i = 0; i < 6; i++) {
+          buildRow.push(this.board[6 * i + 5 - row]);
+        }
+        result.push(buildRow);
+      }
+      return result;
+    case 'right':
+      for (let row = 0; row < 6; row++) {
+        const buildRow = [];
+        for (let i = 5; i >= 0; i--) {
+          buildRow.push(this.board[6 * i + row]);
+        }
+        result.push(buildRow);
+      }
     }
     return result;
   }
