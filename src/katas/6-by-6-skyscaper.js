@@ -182,10 +182,10 @@ class SixBySixSkyscraper {
       rowClues.push({ row, perms });
     }
 
-    console.time('Solved in');
+    // console.time('Solved in');
     const { result: board } = this.nextGeneration([], rowClues, 0);
-    console.timeEnd('Solved in');
-    console.log(`${this.iterations} total iterations`);
+    // console.timeEnd('Solved in');
+    // console.log(`${this.iterations} total iterations`);
     return board.twoDimensionalArray(startAt);
   }
 }
