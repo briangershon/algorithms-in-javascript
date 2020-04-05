@@ -16,11 +16,25 @@ import Permutation from '../permutation';
 class SixBySixSkyscraper {
   constructor() {
     this.permutations = new Permutation().permutations([1, 2, 3, 4, 5, 6]);
+
+    // // for debugging
+    // const counts = {};
+    // const b = new Board();
+    // this.permutations.forEach((p) => {
+    //   const left = b.countSkyscrapers(p, 6);
+    //   const right = b.countSkyscrapers(Array.from(p).reverse(), 6);
+    //   if (counts[''+left+right]) {
+    //     counts[''+left+right]++;
+    //   } else {
+    //     counts[''+left+right] = 1;
+    //   }
+    // });
+    // console.log(counts);
   }
 
   // solve 6 rows (6 generations of moves)
   // start with row 1, pick a permutation. if rejected, pick next permutation
-  // if not rejected, row 2 is next. Pick a permutation.
+  // if not rejected, row 2 is next. Pick a permutation. Recursive.
 
   // board = [721]
   // board = [721, 722]
@@ -30,37 +44,108 @@ class SixBySixSkyscraper {
   // board = [721, 722, 5, 22, 322, 123]
 
   // recursive function
-  nextGeneration(boardArray) {
-    for (let row = 0; row < 720; row++) {
+  nextGeneration(boardArray, rowClues) {
+    const generation = boardArray.length;
+    if (generation === 6) {
+      return false;
+    }
 
-      // if successfully found, return true to make sure each recursive loop exits
-      if (boardArray.length === 6) {
-        const potentiallySolvedBoard = new Board(boardArray, this.clues, this.permutations);
-        if (potentiallySolvedBoard.solved()) {
-          potentiallySolvedBoard.show();
-          return true;
-        }
-      }
+    for (let row = 0; row < rowClues[generation].perms.length; row++) {
       const newBoardArray = Array.from(boardArray);
-      newBoardArray.push(row);
+      newBoardArray.push(rowClues[generation].perms[row]);
       const board = new Board(newBoardArray, this.clues, this.permutations);
 
       if (board.rejected()) {
         continue;
       }
 
-      const done = this.nextGeneration(newBoardArray);
+      // if successfully found, return true to make sure each recursive loop exits
+      if (generation === 5) {
+        const potentiallySolvedBoard = new Board(newBoardArray, this.clues, this.permutations);
+        if (potentiallySolvedBoard.solved()) {
+          // potentiallySolvedBoard.show();
+          return { result: potentiallySolvedBoard };
+        }
+      }
+
+      const done = this.nextGeneration(newBoardArray, rowClues);
       if (done) {
-        return true;
+        return done;
       }
     }
+    return false; // didn't find a solution in this loop
   }
 
-  solvePuzzle(clues) {
+  // rotates cues so that we start with the best clues as row 0
+  bestPlaceToStart(incomingClues) {
+    let direction;
+    if (incomingClues[6] + incomingClues[23] >= incomingClues[11] + incomingClues[18]) {
+      direction = 'top';
+    } else {
+      direction = 'bottom';
+    }
+
+    let clues;
+    let c1;
+    let c2;
+    let c3;
+    let c4;
+    switch(direction) {
+    case 'top':
+      clues = incomingClues;
+      break;
+    case 'bottom':
+      c1 = incomingClues.slice(12, 18).reverse();
+      c2 = incomingClues.slice(6, 12).reverse();
+      c3 = incomingClues.slice(0, 6).reverse();
+      c4 = incomingClues.slice(18, 24).reverse();
+      clues = c1.concat(c2).concat(c3).concat(c4);
+      break;
+    }
+
+    return { startAt: direction, clues: clues };
+  }
+
+  solvePuzzle(incomingClues) {
+    const { startAt, clues } = this.bestPlaceToStart(incomingClues);
+    this.startAt = startAt;
     this.clues = clues;
-    const done = this.nextGeneration([]);
-    return done;
-    // return board.twoDimensionalArray();
+
+    // // debug
+    // const initialBoard = new Board([], this.clues, this.permutations);
+    // initialBoard.show();
+    // return;
+
+    // Let's try building an array for each row separately based on row clues.
+    // Loop through them all. No path is guaranteed to be 100% correct, so
+    // need to try them all, but with a few items as possible.
+
+    const b = new Board();
+    const rowClues = [];
+    for (let row = 0; row < 6; row++) {
+      const left = clues[23 - row];
+      const right = clues[6 + row];
+      const perms = [];
+      for (let p = 0; p < this.permutations.length; p++) {
+        const l = b.countSkyscrapers(this.permutations[p], 6);
+        const r = b.countSkyscrapers(Array.from(this.permutations[p]).reverse(), 6);
+        if (left === 0 && right === 0) { perms.push(p); continue; }
+        if (left === 0 && r === right) { perms.push(p); continue; }
+        if (right === 0 && l === left) { perms.push(p); continue; }
+        if (l === left && r === right) { perms.push(p); continue; }
+      }
+      rowClues.push({ row, perms });
+    }
+
+    console.time('solve');
+    const done = this.nextGeneration([], rowClues);
+    console.timeEnd('solve');
+    switch (this.startAt) {
+    case 'top':
+      return done.result.twoDimensionalArray();
+    case 'bottom':
+      return done.result.twoDimensionalArray().reverse();
+    }
   }
 }
 
@@ -91,7 +176,6 @@ class Board {
         this.board.push(0);
       }
     }
-
     this.clues = cluesArray;
   }
 
@@ -121,6 +205,13 @@ class Board {
     if (this.rejectLine(this.clues[21], 'row-right', 2)) return true;
     if (this.rejectLine(this.clues[22], 'row-right', 1)) return true;
     if (this.rejectLine(this.clues[23], 'row-right', 0)) return true;
+
+    // verify no columns have dups since there may not be enough clues
+    for (let c = 0; c < 6; c++) {
+      if (this.hasDuplicates(this.getColumnDown(c)))  {
+        return true;
+      }
+    }
     return false;
   }
 
@@ -145,7 +236,7 @@ class Board {
   }
 
   getColumnUp(colNumber) {
-    return this.getColumnDown(colNumber).reverse();
+    return Array.from(this.getColumnDown(colNumber)).reverse();
   }
 
   getRowRight(rowNumber) {
@@ -153,7 +244,21 @@ class Board {
   }
 
   getRowLeft(rowNumber) {
-    return this.getRowRight(rowNumber).reverse();
+    return Array.from(this.getRowRight(rowNumber)).reverse();
+  }
+
+  hasDuplicates(array) {
+    const counts = {};
+    for (let i = 0; i < 6; i++) {
+      const el = array[i];
+      if (counts[el]) {
+        return true;  // there's more than one
+      }
+      if (el !== 0) {  // don't count 0's
+        counts[el] = 1;
+      }
+    }
+    return false;
   }
 
   rejectLine(clue, direction, num) {
@@ -174,17 +279,8 @@ class Board {
       break;
     }
 
-    // if any dups of 1,2,3,4,5 or 6 reject!
-    const counts = {};
-    for (let i = 0; i < 6; i++) {
-      const el = array[i];
-      if (counts[el]) {
-        return true;  // there's more than one
-      }
-      if (el !== 0) {  // don't count 0's
-        counts[el] = 1;
-      }
-    }
+    // if any duplicate numbers in a row, reject!
+    if (this.hasDuplicates(array)) return true;
 
     // if there are zeros in the row use ">" otherwise use "!=="
     const count = this.countSkyscrapers(array, clue);

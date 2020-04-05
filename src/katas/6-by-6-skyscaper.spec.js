@@ -10,34 +10,31 @@ describe('SixBySixSkyscraper', () => {
       3, 2, 1, 2, 2, 4
     ];
     const result = s.solvePuzzle(clues);
-    expect(result).toEqual(true);
-    // expect(result[0]).toEqual([ 2, 1, 4, 3, 5, 6]);
-    // expect(result[1]).toEqual([ 1, 6, 3, 2, 4, 5]);
-    // expect(result[2]).toEqual([ 4, 3, 6, 5, 1, 2]);
-    // expect(result[3]).toEqual([ 6, 5, 2, 1, 3, 4]);
-    // expect(result[4]).toEqual([ 5, 4, 1, 6, 2, 3]);
-    // expect(result[5]).toEqual([ 3, 2, 5, 4, 6, 1]);
+    expect(result[0]).toEqual([ 2, 1, 4, 3, 5, 6]);
+    expect(result[1]).toEqual([ 1, 6, 3, 2, 4, 5]);
+    expect(result[2]).toEqual([ 4, 3, 6, 5, 1, 2]);
+    expect(result[3]).toEqual([ 6, 5, 2, 1, 3, 4]);
+    expect(result[4]).toEqual([ 5, 4, 1, 6, 2, 3]);
+    expect(result[5]).toEqual([ 3, 2, 5, 4, 6, 1]);
   });
 
-  // test('can solve 6x6 puzzle 2', () => {
-  //   const s = new SixBySixSkyscraper();
-  //   const clues = [
-  //     0, 0, 0, 2, 2, 0,
-  //     0, 0, 0, 6, 3, 0,
-  //     0, 4, 0, 0, 0, 0,
-  //     4, 4, 0, 3, 0, 0
-  //   ];
-  //   const result = s.solvePuzzle(clues);
-  //   expect(result).toEqual(true);
+  test('can solve 6x6 puzzle 2', () => {
+    const s = new SixBySixSkyscraper();
+    const clues = [
+      0, 0, 0, 2, 2, 0,
+      0, 0, 0, 6, 3, 0,
+      0, 4, 0, 0, 0, 0,
+      4, 4, 0, 3, 0, 0
+    ];
 
-  //   // var expected = [[ 5, 6, 1, 4, 3, 2 ], 
-  //   // [ 4, 1, 3, 2, 6, 5 ], 
-  //   // [ 2, 3, 6, 1, 5, 4 ], 
-  //   // [ 6, 5, 4, 3, 2, 1 ], 
-  //   // [ 1, 2, 5, 6, 4, 3 ], 
-  //   // [ 3, 4, 2, 5, 1, 6 ]];
-
-  // });
+    const result = s.solvePuzzle(clues);
+    expect(result[0]).toEqual([ 5, 6, 1, 4, 3, 2 ]);
+    expect(result[1]).toEqual([ 4, 1, 3, 2, 6, 5 ]);
+    expect(result[2]).toEqual([ 2, 3, 6, 1, 5, 4 ]);
+    expect(result[3]).toEqual([ 6, 5, 4, 3, 2, 1 ]);
+    expect(result[4]).toEqual([ 1, 2, 5, 6, 4, 3 ]);
+    expect(result[5]).toEqual([ 3, 4, 2, 5, 1, 6 ]);
+  });
 
   // test('can solve 6x6 puzzle 3', () => {
   //   const s = new SixBySixSkyscraper();
@@ -47,17 +44,15 @@ describe('SixBySixSkyscraper', () => {
   //     0, 3, 0, 3, 2, 3,
   //     3, 2, 0, 3, 1, 0
   //   ];
+
   //   const result = s.solvePuzzle(clues);
-  //   expect(result).toEqual(true);
-
-  //   // var expected = [[ 5, 2, 6, 1, 4, 3 ], 
-  //   // [ 6, 4, 3, 2, 5, 1 ], 
-  //   // [ 3, 1, 5, 4, 6, 2 ], 
-  //   // [ 2, 6, 1, 5, 3, 4 ], 
-  //   // [ 4, 3, 2, 6, 1, 5 ], 
-  //   // [ 1, 5, 4, 3, 2, 6 ]];
+  //   expect(result[0]).toEqual([ 5, 2, 6, 1, 4, 3 ]);
+  //   expect(result[1]).toEqual([ 6, 4, 3, 2, 5, 1 ]);
+  //   expect(result[2]).toEqual([ 3, 1, 5, 4, 6, 2 ]);
+  //   expect(result[3]).toEqual([ 2, 6, 1, 5, 3, 4 ]);
+  //   expect(result[4]).toEqual([ 4, 3, 2, 6, 1, 5 ]);
+  //   expect(result[5]).toEqual([ 1, 5, 4, 3, 2, 6 ]);
   // });
-
 });
 
 describe('Board', () => {
