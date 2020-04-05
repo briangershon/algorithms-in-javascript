@@ -6,6 +6,8 @@ Strategy:
 * Cache all permutations of a line of 6 skyscrapers
 * Use clues on the board to reject boards that have wrong combination of rows.
 * Think of as a maze backtracking problem and each row is a move.
+* Optimize by starting with the side of the puzzle that has the most clues.
+* Optimize by starting with permutations in highest lexicographical order.
 
 */
 
@@ -15,7 +17,8 @@ import Permutation from '../permutation';
 
 class SixBySixSkyscraper {
   constructor() {
-    this.permutations = new Permutation().permutations([1, 2, 3, 4, 5, 6]);
+    this.permutations = new Permutation().permutations([1, 2, 3, 4, 5, 6]).reverse();
+    this.iterations = 0;
 
     // // for debugging
     // const counts = {};
@@ -51,6 +54,7 @@ class SixBySixSkyscraper {
     }
 
     for (let row = 0; row < rowClues[generation].perms.length; row++) {
+      this.iterations++;
       const newBoardArray = Array.from(boardArray);
       newBoardArray.push(rowClues[generation].perms[row]);
       const board = new Board(newBoardArray, this.clues, this.permutations);
@@ -145,6 +149,7 @@ class SixBySixSkyscraper {
   }
 
   solvePuzzle(incomingClues) {
+    this.iterations = 0;
     const { startAt, clues } = this.bestPlaceToStart(incomingClues);
 
     this.startAt = startAt;
@@ -177,8 +182,11 @@ class SixBySixSkyscraper {
       rowClues.push({ row, perms });
     }
 
-    const done = this.nextGeneration([], rowClues);
-    return done.result.twoDimensionalArray(startAt);
+    console.time('Solved in');
+    const { result: board } = this.nextGeneration([], rowClues, 0);
+    console.timeEnd('Solved in');
+    console.log(`${this.iterations} total iterations`);
+    return board.twoDimensionalArray(startAt);
   }
 }
 
