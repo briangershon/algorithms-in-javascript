@@ -303,7 +303,6 @@ class Board {
   }
 
   rejectLine(clue, direction, num) {
-    if (clue === 0) return false; // missing clue, consider things to be good
     let array;
     switch (direction) {
     case 'col-down':
@@ -322,6 +321,8 @@ class Board {
 
     // if any duplicate numbers in a row, reject!
     if (this.hasDuplicates(array)) return true;
+
+    if (clue === 0) return false; // missing clue, consider things to be good
 
     // if there are zeros in the row use ">" otherwise use "!=="
     const count = this.countSkyscrapers(array, clue);

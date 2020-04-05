@@ -72,6 +72,24 @@ describe('SixBySixSkyscraper', () => {
     expect(result[5]).toEqual([ 3, 4, 1, 6, 2, 5 ]);
   });
 
+  test('can solve 6x6 puzzle 5', () => {
+    const s = new SixBySixSkyscraper();
+    const clues = [
+      4, 4, 0, 3, 0, 0,
+      0, 0, 0, 2, 2, 0,
+      0, 0, 0, 6, 3, 0,
+      0, 4, 0, 0, 0, 0
+    ];
+
+    const result = s.solvePuzzle(clues);
+    expect(result[0]).toEqual([ 3, 1, 6, 2, 4, 5 ]);
+    expect(result[1]).toEqual([ 4, 2, 5, 3, 1, 6 ]);
+    expect(result[2]).toEqual([ 2, 5, 4, 6, 3, 1 ]);
+    expect(result[3]).toEqual([ 5, 6, 3, 1, 2, 4 ]);
+    expect(result[4]).toEqual([ 1, 4, 2, 5, 6, 3 ]);
+    expect(result[5]).toEqual([ 6, 3, 1, 4, 5, 2 ]);
+  });
+
   describe('bestPlaceToStart', () => {
     test('top', () => {
       const s = new SixBySixSkyscraper();
