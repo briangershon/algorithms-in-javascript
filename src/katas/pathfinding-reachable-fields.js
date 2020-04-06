@@ -3,6 +3,7 @@
 
 Strategy:
 
+  * Start at each goal, and pathfind our way to the starting space.
   * Use backtracking algorithm to find routes
 
 I wrote the initial code here: https://github.com/briangershon/algorithms-in-javascript
@@ -15,26 +16,43 @@ class PathfindingReachableFields {
     this.grid = grid;
     this.rows = rows;
     this.columns = columns;
-    this.currentRow = startRow;
-    this.currentColumn = startColumn;
+    this.startRow = startRow;
+    this.startColumn = startColumn;
     this.WALL = '#';
     this.GOAL = 'G';
     this.SPACE = ' ';
     this.ME = '*';
-    this.goalsReached = {};
   }
 
   numberOfReachableFields() {
     if (this.debug) this.show();
-    this.move([-1, -1], [this.currentRow, this.currentColumn]);
-    return Object.keys(this.goalsReached).length;
+
+    const potentialReachableFields = [];
+    for (let c = 0; c < this.columns; c++) {
+      if (this.grid[this.rows - 1][c]) {
+        if (c > 0 && this.grid[this.rows - 1][c - 1]) {
+          // optimization: if a goal is next to another goal, count it true
+          // since piece can always get there if it can get to other one
+          potentialReachableFields.push(true);  
+        } else {
+          potentialReachableFields.push(this.move([-1, -1], [this.rows - 1, c]));
+        }
+      }
+    }
+
+    const success = potentialReachableFields.filter((f) => {
+      return f;
+    });
+
+    return success.length;
   }
 
   move(prevLocation, toLocation) {
-    if (this.debug) console.log(`Moving from ${prevLocation} to ${toLocation}`);
+    // console.log(`Moving from ${prevLocation} to ${toLocation}`);
 
-    if (this.charAtRowCol(toLocation) === this.GOAL) {
-      this.goalsReached[toLocation] = true;
+    if (toLocation[0] === this.startRow && toLocation[1] === this.startColumn) {
+      if (this.debug) console.log('found player!');
+      return true; // successfully found player
     }
 
     const moves = this.availableMoves(toLocation);
@@ -43,7 +61,8 @@ class PathfindingReachableFields {
         if (moves[m][0] === prevLocation[0] && moves[m][1] === prevLocation[1]) {
           continue; // only follow moves that don't go back to where we just came from
         }
-        this.move(toLocation, moves[m]);
+        const result = this.move(toLocation, moves[m]);
+        if (result) return true;
       }
     }
 
@@ -54,17 +73,18 @@ class PathfindingReachableFields {
     const [r, c] = location;
     const moves = [];
 
-    const leftAvailable = (c > 0 && (this.charAtRowCol([r, c - 1]) === this.SPACE || this.charAtRowCol([r, c - 1]) === this.GOAL));
+    const leftAvailable = (c > 0 && (this.charAtRowCol([r, c - 1]) === this.SPACE || this.charAtRowCol([r, c - 1]) === this.ME));
 
-    const rightAvailable = (c < this.columns - 1 && (this.charAtRowCol([r, c + 1]) === this.SPACE || this.charAtRowCol([r, c + 1]) === this.GOAL));
+    const rightAvailable = (c < this.columns - 1 && (this.charAtRowCol([r, c + 1]) === this.SPACE || this.charAtRowCol([r, c + 1]) === this.ME));
 
-    const forwardAvailable = (r < this.rows - 1 && (this.charAtRowCol([r + 1, c]) === this.SPACE || this.charAtRowCol([r + 1, c]) === this.GOAL));
+    const backAvailable = (r > 0 && (this.charAtRowCol([r - 1, c]) === this.SPACE || this.charAtRowCol([r - 1, c]) === this.ME));
 
-    if (forwardAvailable) moves.push([r + 1, c]);
+    if (backAvailable) moves.push([r - 1, c]);
     if (leftAvailable) moves.push([r, c - 1]);
     if (rightAvailable) moves.push([r, c + 1]);
 
     if (moves.length) {
+      // if (this.debug) console.log('moves avail', moves);
       return moves;
     }
     return false;
@@ -90,10 +110,10 @@ class PathfindingReachableFields {
   }
 
   charAtRowCol([row, col]) {
+    if (row === this.startRow && col === this.startColumn) return this.ME;
     const gridItem = this.grid[row][col];
     switch (gridItem) {
     case true:
-      if (row === this.rows - 1) return this.GOAL;
       return this.SPACE;
     case false:
       return this.WALL;
