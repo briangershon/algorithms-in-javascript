@@ -22,21 +22,34 @@ class PathfindingReachableFields {
     this.GOAL = 'G';
     this.SPACE = ' ';
     this.ME = '*';
+
+    this.moves = -1;
   }
 
   numberOfReachableFields() {
+    this.moves = -1;
+    console.time('process');
     if (this.debug) this.show();
 
     const potentialReachableFields = [];
+    const lastRow = this.rows - 1;
+
+    // optimization: if a goal is next to another goal, count it true
+    // since piece can always get there if it can get to other one
+
+    let firstGoal = false;
     for (let c = 0; c < this.columns; c++) {
-      if (this.grid[this.rows - 1][c]) {
-        if (c > 0 && this.grid[this.rows - 1][c - 1]) {
-          // optimization: if a goal is next to another goal, count it true
-          // since piece can always get there if it can get to other one
-          potentialReachableFields.push(true);  
-        } else {
-          potentialReachableFields.push(this.move([-1, -1], [this.rows - 1, c]));
-        }
+      if (!this.grid[lastRow][c]) {
+        potentialReachableFields.push(false);
+        firstGoal = false;
+        continue;
+      }
+      if (this.grid[lastRow][c] && !firstGoal) {
+        potentialReachableFields.push(this.move([-1, -1], [lastRow, c]));
+        firstGoal = true;
+      } else {
+        // part of a contiguous exit, so use same result as previous result
+        potentialReachableFields.push(potentialReachableFields[c - 1]);
       }
     }
 
@@ -44,14 +57,17 @@ class PathfindingReachableFields {
       return f;
     });
 
+    console.log('total moves', this.moves);
+    console.timeEnd('process');
     return success.length;
   }
 
   move(prevLocation, toLocation) {
-    // console.log(`Moving from ${prevLocation} to ${toLocation}`);
+    this.moves++;
+    if (this.debug) console.log(`Moving from ${prevLocation} to ${toLocation}`);
 
     if (toLocation[0] === this.startRow && toLocation[1] === this.startColumn) {
-      if (this.debug) console.log('found player!');
+      if (this.debug) console.log('found player!', toLocation);
       return true; // successfully found player
     }
 
@@ -77,14 +93,23 @@ class PathfindingReachableFields {
 
     const rightAvailable = (c < this.columns - 1 && (this.charAtRowCol([r, c + 1]) === this.SPACE || this.charAtRowCol([r, c + 1]) === this.ME));
 
-    const backAvailable = (r > 0 && (this.charAtRowCol([r - 1, c]) === this.SPACE || this.charAtRowCol([r - 1, c]) === this.ME));
+    const backAvailable = (r > this.startRow) && (r > 0 && (this.charAtRowCol([r - 1, c]) === this.SPACE || this.charAtRowCol([r - 1, c]) === this.ME));
 
-    if (backAvailable) moves.push([r - 1, c]);
-    if (leftAvailable) moves.push([r, c - 1]);
-    if (rightAvailable) moves.push([r, c + 1]);
+    if (this.startColumn < c) {
+      if (leftAvailable) moves.push([r, c - 1]);
+      if (backAvailable) moves.push([r - 1, c]);
+      if (rightAvailable) moves.push([r, c + 1]);
+    } else if (this.startColumn > c) {
+      if (rightAvailable) moves.push([r, c + 1]);
+      if (backAvailable) moves.push([r - 1, c]);
+      if (leftAvailable) moves.push([r, c - 1]);
+    } else {
+      if (backAvailable) moves.push([r - 1, c]);
+      if (rightAvailable) moves.push([r, c + 1]);
+      if (leftAvailable) moves.push([r, c - 1]);
+    }
 
     if (moves.length) {
-      // if (this.debug) console.log('moves avail', moves);
       return moves;
     }
     return false;
@@ -112,7 +137,7 @@ class PathfindingReachableFields {
   charAtRowCol([row, col]) {
     if (row === this.startRow && col === this.startColumn) return this.ME;
     const gridItem = this.grid[row][col];
-    switch (gridItem) {
+    switch (Boolean(gridItem)) {
     case true:
       return this.SPACE;
     case false:
