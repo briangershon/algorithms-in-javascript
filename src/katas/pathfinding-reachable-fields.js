@@ -28,7 +28,6 @@ class PathfindingReachableFields {
 
   numberOfReachableFields() {
     this.moves = -1;
-    console.time('process');
     if (this.debug) this.show();
 
     const potentialReachableFields = [];
@@ -57,8 +56,6 @@ class PathfindingReachableFields {
       return f;
     });
 
-    console.log('total moves', this.moves);
-    console.timeEnd('process');
     return success.length;
   }
 
