@@ -39,5 +39,5 @@ Most of my solutions are on the Codewars' site. The following solutions represen
 For maximum fun and education, I recommend you solve these on your own without peeking.
 
 * parseInt() reloaded ([challenge description](https://www.codewars.com/kata/525c7c5ab6aecef16e0001a5)) `src/katas/parseint.js`
-* 6 By 6 Skyscrapers ([challenge description](https://www.codewars.com/kata/5679d5a3f2272011d700000d)) `src/katas/6-by-6-skyscraper.js`
+* Skyscrapers (6x6, 4x4) ([challenge description](https://www.codewars.com/kata/5679d5a3f2272011d700000d)) `src/katas/skyscraper.js`
 * Optimized Pathfinding ([challenge description](https://www.codewars.com/kata/57b4d2dad2a31c75f7000223)) `src/katas/pathfinding-reachable-fields`

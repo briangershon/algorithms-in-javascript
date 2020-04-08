@@ -1,8 +1,8 @@
-import { Board, SixBySixSkyscraper } from './6-by-6-skyscaper';
+import { Board, Skyscraper } from './skyscaper';
 
-describe('SixBySixSkyscraper', () => {
+describe('Skyscraper', () => {
   test('can solve 6x6 puzzle 1', () => {
-    const s = new SixBySixSkyscraper();
+    const s = new Skyscraper();
     const clues = [
       3, 2, 2, 3, 2, 1,
       1, 2, 3, 3, 2, 2,
@@ -19,7 +19,7 @@ describe('SixBySixSkyscraper', () => {
   });
 
   test('can solve 6x6 puzzle 2', () => {
-    const s = new SixBySixSkyscraper();
+    const s = new Skyscraper();
     const clues = [
       0, 0, 0, 2, 2, 0,
       0, 0, 0, 6, 3, 0,
@@ -37,7 +37,7 @@ describe('SixBySixSkyscraper', () => {
   });
 
   test('can solve 6x6 puzzle 3', () => {
-    const s = new SixBySixSkyscraper();
+    const s = new Skyscraper();
     const clues = [
       0, 3, 0, 5, 3, 4, 
       0, 0, 0, 0, 0, 1,
@@ -55,7 +55,7 @@ describe('SixBySixSkyscraper', () => {
   });
 
   test('can solve 6x6 puzzle 4', () => {
-    const s = new SixBySixSkyscraper();
+    const s = new Skyscraper();
     const clues = [
       0, 3, 0, 3, 2, 3,
       3, 2, 0, 3, 1, 0,
@@ -73,7 +73,7 @@ describe('SixBySixSkyscraper', () => {
   });
 
   test('can solve 6x6 puzzle 5', () => {
-    const s = new SixBySixSkyscraper();
+    const s = new Skyscraper();
     const clues = [
       4, 4, 0, 3, 0, 0,
       0, 0, 0, 2, 2, 0,
@@ -92,26 +92,26 @@ describe('SixBySixSkyscraper', () => {
 
   describe('bestPlaceToStart', () => {
     test('top', () => {
-      const s = new SixBySixSkyscraper();
+      const s = new Skyscraper();
       const incomingClues = [ 3, 2, 2, 3, 2, 1, 6, 6, 6, 3, 2, 2, 5, 1, 2, 2, 4, 3, 3, 2, 1, 1, 1, 1 ];
       const newClues = [ 3, 2, 2, 3, 2, 1, 6, 6, 6, 3, 2, 2, 5, 1, 2, 2, 4, 3, 3, 2, 1, 1, 1, 1 ];
       expect(s.bestPlaceToStart(incomingClues).clues).toEqual(newClues);
     });
     test('bottom', () => {
-      const s = new SixBySixSkyscraper();
+      const s = new Skyscraper();
       const incomingClues = [ 0, 0, 0, 2, 2, 0, 0, 0, 0, 6, 3, 0, 0, 4, 0, 0, 0, 0, 4, 4, 0, 3, 0, 0 ];
       const newClues = [ 0, 0, 0, 0, 4, 0, 0, 3, 6, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 3, 0, 4, 4 ];
       expect(s.bestPlaceToStart(incomingClues).clues).toEqual(newClues);
     });
     test('left', () => {
-      const s = new SixBySixSkyscraper();
+      const s = new Skyscraper();
       const incomingClues = [ 3, 2, 2, 3, 2, 1, 1, 2, 3, 3, 2, 2, 5, 1, 2, 2, 4, 3, 3, 2, 1, 2, 2, 4 ];
       // const newClues = [ 4, 2, 2, 1, 2, 3, 3, 2, 2, 3, 2, 1, 1, 2, 3, 3, 2, 2, 5, 1, 2, 2, 4, 3 ];
       const newClues = [ 3, 2, 1, 2, 2, 4, 3, 2, 2, 3, 2, 1, 1, 2, 3, 3, 2, 2, 5, 1, 2, 2, 4, 3 ];
       expect(s.bestPlaceToStart(incomingClues).clues).toEqual(newClues);
     });
     test('right', () => {
-      const s = new SixBySixSkyscraper();
+      const s = new Skyscraper();
       const incomingClues = [ 0, 3, 0, 5, 3, 4, 0, 0, 0, 0, 0, 1, 0, 3, 0, 3, 2, 3, 3, 2, 0, 3, 1, 0 ];
       const newClues = [ 0, 0, 0, 0, 0, 1, 0, 3, 0, 3, 2, 3, 3, 2, 0, 3, 1, 0, 0, 3, 0, 5, 3, 4 ];
       expect(s.bestPlaceToStart(incomingClues).clues).toEqual(newClues);

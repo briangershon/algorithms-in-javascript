@@ -15,7 +15,7 @@ import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import Permutation from '../permutation';
 
-class SixBySixSkyscraper {
+class Skyscraper {
   constructor() {
     this.permutations = new Permutation().permutations([1, 2, 3, 4, 5, 6]).reverse();
     this.iterations = 0;
@@ -399,4 +399,4 @@ class Board {
   }
 }
 
-export { SixBySixSkyscraper, Board };
+export { Skyscraper, Board };
