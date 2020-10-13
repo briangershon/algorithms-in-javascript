@@ -6,6 +6,7 @@
   "scripts": {
     "preinstall": "npx npm-force-resolutions",
     "test": "jest --watch src",
+    "test-ci": "jest src",
     "lint": "eslint src"
   },
   "author": "Brian Gershon",
