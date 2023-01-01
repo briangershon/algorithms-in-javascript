@@ -12,6 +12,7 @@ I'd recommend adding the `eslint` plugin for your code editor. You can also run 
 
 ## Algorithms
 
+* Merkle Tree (`src/merkletree.js`). Initial test cases from Alchemy University's course.
 * Sorts:
   * Bubble Sort (`src/bubble-sort.js`)
   * Merge Sort (`src/merge-sort.js`)
